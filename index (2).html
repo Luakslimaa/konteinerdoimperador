@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kontainer do Imperador — Painel de Gestão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C96A;--gold-dim:#8A6B2A;--black:#0A0A0A;--surface:#111111;--surface2:#1A1A1A;--surface3:#222222;--border:rgba(201,168,76,0.15);--border-bright:rgba(201,168,76,0.4);--text:#F0EDE8;--text-muted:#888;--text-dim:#555;--green:#4CAF7D;--red:#E05555;--blue:#5599E0;--sidebar-w:260px;--header-h:64px;}
+[data-theme="light"]{--black:#F5F3EF;--surface:#FFFFFF;--surface2:#F0EDE8;--surface3:#E8E4DC;--border:rgba(138,107,42,0.18);--border-bright:rgba(138,107,42,0.4);--text:#1A1510;--text-muted:#6B6050;--text-dim:#AAA09A;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--text);min-height:100vh;overflow-x:hidden;transition:background .3s,color .3s;}
+
+/* LOGIN */
+#login-screen{position:fixed;inset:0;z-index:9999;background:var(--black);display:flex;align-items:center;justify-content:center;flex-direction:column;background-image:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.1) 0%,transparent 65%);}
+.login-logo-ring{width:140px;height:140px;border-radius:50%;background:var(--surface2);border:2px solid var(--border-bright);display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 0 60px rgba(201,168,76,0.25),0 0 120px rgba(201,168,76,0.08);overflow:hidden;padding:6px;}
+.login-logo-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+#login-screen h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;letter-spacing:1px;color:var(--gold);text-align:center;line-height:1.2;margin-bottom:4px;}
+#login-screen .sub{color:var(--text-muted);font-size:11px;margin-bottom:36px;letter-spacing:3px;text-transform:uppercase;}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:36px;width:380px;box-shadow:0 40px 80px rgba(0,0,0,0.7);}
+.login-box label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;}
+.login-box input{width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:14px;outline:none;transition:border .2s;font-family:'DM Sans',sans-serif;margin-bottom:18px;}
+.login-box input:focus{border-color:var(--gold);}
+.btn-gold{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#000;font-weight:700;font-size:14px;border:none;border-radius:9px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:opacity .2s,transform .1s;font-family:'DM Sans',sans-serif;}
+.btn-gold:hover{opacity:.85;}.btn-gold:active{transform:scale(.98);}
+.forgot-link{display:block;text-align:center;margin-top:16px;font-size:12px;color:var(--text-dim);cursor:pointer;transition:color .2s;text-decoration:none;}
+.forgot-link:hover{color:var(--gold);}
+
+/* APP */
+#app{display:none;}
+#app.active{display:flex;}
+
+/* SIDEBAR */
+#sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);height:100vh;position:fixed;left:0;top:0;display:flex;flex-direction:column;z-index:100;transition:transform .3s ease,background .3s,border .3s;}
+.sidebar-header{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.sidebar-logo{width:40px;height:40px;border-radius:50%;background:var(--surface3);border:1px solid var(--border-bright);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
+.sidebar-logo img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.sidebar-brand h2{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--gold);line-height:1.2;}
+.sidebar-brand span{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+.sidebar-nav{flex:1;overflow-y:auto;padding:16px 12px;}
+.nav-section-title{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:2px;padding:0 8px;margin:20px 0 6px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:13.5px;color:var(--text-muted);font-weight:500;user-select:none;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:linear-gradient(90deg,rgba(201,168,76,0.15),transparent);color:var(--gold);border-left:2px solid var(--gold);}
+.nav-item .icon{font-size:16px;width:20px;text-align:center;}
+.nav-badge{margin-left:auto;background:var(--gold);color:#000;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.sidebar-footer{padding:16px 12px;border-top:1px solid var(--border);}
+.user-info{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .2s;}
+.user-info:hover{background:var(--surface2);}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000;}
+.user-name{font-size:13px;font-weight:600;}.user-role{font-size:11px;color:var(--text-muted);}
+
+/* MAIN */
+#main{margin-left:var(--sidebar-w);min-height:100vh;flex:1;display:flex;flex-direction:column;}
+#topbar{height:var(--header-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;gap:16px;transition:background .3s,border .3s;}
+.topbar-left{display:flex;align-items:center;gap:16px;}
+#menu-toggle{display:none;background:none;border:none;color:var(--text);font-size:20px;cursor:pointer;}
+.topbar-title{font-size:17px;font-weight:600;}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;flex:1;max-width:320px;}
+.search-bar input{background:none;border:none;outline:none;color:var(--text);font-size:13px;width:100%;font-family:'DM Sans',sans-serif;}
+.search-bar input::placeholder{color:var(--text-dim);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.notif-btn{position:relative;background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:border .2s;}
+.notif-btn:hover{border-color:var(--gold);}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--gold);border:2px solid var(--surface);}
+.date-badge{font-size:12px;color:var(--text-muted);background:var(--surface2);border:1px solid var(--border);padding:6px 12px;border-radius:8px;}
+
+/* PAGES */
+.page{display:none;padding:28px;animation:fadeIn .3s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* BUTTONS */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.section-header h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;}
+.section-header span{color:var(--gold);}
+.btn-sm{padding:8px 16px;background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);font-size:12px;border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;font-weight:500;}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold);}
+.btn-primary{padding:10px 20px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border:none;color:#000;font-size:13px;font-weight:700;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .2s;}
+.btn-primary:hover{opacity:.85;}
+.btn-danger{padding:6px 12px;background:rgba(224,85,85,0.12);border:1px solid rgba(224,85,85,0.3);color:var(--red);font-size:12px;border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+.btn-danger:hover{background:rgba(224,85,85,0.25);}
+.btn-edit{padding:6px 12px;background:rgba(85,153,224,0.12);border:1px solid rgba(85,153,224,0.3);color:var(--blue);font-size:12px;border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+.btn-edit:hover{background:rgba(85,153,224,0.25);}
+
+/* METRIC CARDS */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:24px;}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;position:relative;overflow:hidden;transition:border .2s,transform .2s;}
+.metric-card:hover{border-color:var(--border-bright);transform:translateY(-2px);}
+.metric-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),transparent);}
+.metric-card .label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;}
+.metric-card .value{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--text);line-height:1;margin-bottom:10px;}
+.metric-card .value.gold{color:var(--gold);}
+.metric-card .change{font-size:12px;display:flex;align-items:center;gap:4px;}
+.change.up{color:var(--green);}.change.down{color:var(--red);}
+.metric-icon{position:absolute;right:20px;top:20px;font-size:28px;opacity:.12;}
+
+/* CHART CARDS */
+.chart-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;transition:background .3s,border .3s;}
+.chart-card h3{font-size:13px;font-weight:600;margin-bottom:20px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
+.chart-wrap{position:relative;height:220px;}
+
+/* TABLE */
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px;transition:background .3s,border .3s;}
+.table-card-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.table-card-header h3{font-size:14px;font-weight:600;}
+table{width:100%;border-collapse:collapse;}
+th{padding:12px 18px;text-align:left;font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;background:var(--surface2);border-bottom:1px solid var(--border);}
+td{padding:13px 18px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(128,128,128,0.06);}
+tr:last-child td{border-bottom:none;}tr:hover td{background:rgba(128,128,128,0.03);}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.badge.confirmed{background:rgba(76,175,125,0.15);color:var(--green);}
+.badge.progress{background:rgba(201,168,76,0.15);color:var(--gold);}
+.badge.done{background:rgba(85,153,224,0.15);color:var(--blue);}
+.badge.cancelled{background:rgba(224,85,85,0.15);color:var(--red);}
+
+/* BARBER CARDS */
+.barbers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-bottom:24px;}
+.barber-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;text-align:center;transition:all .2s;}
+.barber-card:hover{border-color:var(--border-bright);transform:translateY(-3px);}
+.barber-avatar{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#000;border:2px solid var(--border-bright);}
+.barber-card h3{font-size:15px;font-weight:700;margin-bottom:3px;}
+.barber-card .role{font-size:12px;color:var(--text-dim);margin-bottom:10px;}
+.barber-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.barber-stat{background:var(--surface2);border-radius:8px;padding:9px;}
+.barber-stat .s-val{font-size:15px;font-weight:700;color:var(--gold);}
+.barber-stat .s-lbl{font-size:10px;color:var(--text-dim);margin-top:2px;}
+.stars{color:var(--gold);font-size:12px;margin-bottom:10px;}
+.barber-actions{display:flex;gap:7px;justify-content:center;}
+
+/* CLIENT */
+.client-list{display:flex;flex-direction:column;gap:10px;}
+.client-row{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 16px;display:flex;align-items:center;gap:12px;transition:all .2s;}
+.client-row:hover{border-color:var(--border-bright);}
+.c-avatar{width:42px;height:42px;border-radius:50%;background:var(--surface3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.c-info{flex:1;min-width:0;}
+.c-name{font-size:14px;font-weight:600;margin-bottom:2px;}
+.c-meta{font-size:11px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.c-visits{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;text-align:center;flex-shrink:0;}
+.c-visits .v-num{font-size:17px;font-weight:700;color:var(--gold);}
+.c-visits .v-lbl{font-size:10px;color:var(--text-dim);}
+.c-actions{display:flex;gap:6px;flex-shrink:0;}
+
+/* STOCK */
+.stock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.stock-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.s-name{font-size:14px;font-weight:600;margin-bottom:3px;}
+.s-cat{font-size:11px;color:var(--text-dim);margin-bottom:13px;}
+.stock-bar-wrap{background:var(--surface2);border-radius:4px;height:6px;margin-bottom:8px;}
+.stock-bar{height:100%;border-radius:4px;transition:width .5s;}
+.stock-bar.ok{background:var(--green);}.stock-bar.low{background:var(--gold);}.stock-bar.critical{background:var(--red);}
+.stock-qty{font-size:12px;color:var(--text-muted);}
+.stock-alert{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--red);background:rgba(224,85,85,0.1);padding:3px 8px;border-radius:20px;margin-top:6px;}
+.stock-actions{display:flex;gap:7px;margin-top:12px;}
+
+/* FINANCIAL */
+.fin-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.payment-methods{display:flex;flex-direction:column;gap:10px;margin-top:10px;}
+.pm-item{display:flex;align-items:center;gap:10px;}
+.pm-bar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:8px;}
+.pm-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold-dim));}
+.pm-label{font-size:12px;min-width:78px;color:var(--text-muted);}
+.pm-value{font-size:12px;color:var(--gold);font-weight:700;min-width:36px;text-align:right;}
+
+/* SCHEDULE */
+.schedule-grid{display:grid;grid-template-columns:1fr 320px;gap:16px;}
+.time-slots{display:flex;flex-direction:column;gap:8px;}
+.time-slot{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;}
+.time-slot .ts-time{font-size:13px;color:var(--text-muted);min-width:48px;font-weight:600;}
+.time-slot .ts-info{flex:1;}
+.time-slot .ts-name{font-size:13px;font-weight:600;}
+.time-slot .ts-service{font-size:11px;color:var(--text-dim);}
+.time-slot .ts-barber{font-size:11px;color:var(--gold);}
+.time-slot.empty{opacity:.45;}
+.ts-actions{display:flex;gap:4px;flex-shrink:0;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.75);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;width:500px;max-width:calc(100vw - 28px);max-height:90vh;overflow-y:auto;animation:slideUp .3s ease;}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:none;opacity:1;}}
+.modal h2{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:22px;color:var(--gold);}
+.form-group{margin-bottom:15px;}
+.form-group label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13.5px;outline:none;transition:border .2s;font-family:'DM Sans',sans-serif;}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold);}
+.form-group select option{background:var(--surface2);}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;}
+
+/* CONFIRM */
+.confirm-dialog{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;width:360px;max-width:calc(100vw - 28px);text-align:center;animation:slideUp .3s ease;}
+.confirm-dialog h3{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:10px;}
+.confirm-dialog p{color:var(--text-muted);font-size:13px;margin-bottom:22px;line-height:1.6;}
+.confirm-dialog .actions{display:flex;gap:10px;justify-content:center;}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:28px;right:28px;z-index:2000;display:flex;flex-direction:column;gap:8px;}
+.toast{background:var(--surface2);border:1px solid var(--border-bright);border-radius:10px;padding:13px 18px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:10px;box-shadow:0 10px 40px rgba(0,0,0,.5);animation:toastIn .3s ease;min-width:250px;}
+.toast.success{border-color:rgba(76,175,125,.5);}.toast.error{border-color:rgba(224,85,85,.5);}
+@keyframes toastIn{from{transform:translateX(40px);opacity:0;}to{transform:none;opacity:1;}}
+
+/* LOADING */
+.loading-bar{position:fixed;top:0;left:0;z-index:9998;height:2px;background:var(--gold);animation:loadBar 1.5s ease forwards;}
+@keyframes loadBar{from{width:0;}to{width:100%;}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--black);}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:4px;}::-webkit-scrollbar-thumb:hover{background:var(--gold-dim);}
+
+/* PROGRESS */
+.ring-container{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.progress-bar{flex:1;height:6px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:4px;transition:width .8s ease;}
+.ring-value{font-size:13px;font-weight:700;color:var(--gold);}
+
+/* CONFIG */
+.config-section{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;}
+.config-section h3{font-size:13px;font-weight:600;margin-bottom:16px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;}
+.config-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.config-row:last-child{border-bottom:none;}.cr-label{font-size:13.5px;}.cr-sub{font-size:11px;color:var(--text-dim);margin-top:2px;}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--surface3);border:1px solid var(--border);position:relative;cursor:pointer;transition:background .25s,border .25s;}
+.toggle.on{background:var(--gold);border-color:var(--gold);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s;}
+.toggle.on::after{transform:translateX(20px);}
+.gold-divider{height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:18px 0;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%);}
+  #sidebar.open{transform:none;box-shadow:20px 0 60px rgba(0,0,0,.8);}
+  #main{margin-left:0;}#menu-toggle{display:flex;}
+  .chart-grid,.fin-row,.schedule-grid{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .page{padding:14px;}#topbar{padding:0 14px;}
+  .metrics-grid{grid-template-columns:1fr 1fr;}.barbers-grid{grid-template-columns:1fr 1fr;}
+  .search-bar,.date-badge{display:none;}.form-grid-2{grid-template-columns:1fr;}
+  .c-actions{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+<div class="loading-bar" id="loadBar"></div>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen">
+  <div class="login-logo-ring">
+    <img src="https://i.ibb.co/placeholder/logo.png" id="login-logo-img" alt="Kontainer do Imperador" onerror="this.style.display='none';this.parentElement.innerHTML='✂️';this.parentElement.style.fontSize='48px'">
+  </div>
+  <h1>KONTAINER DO<br>IMPERADOR</h1>
+  <p class="sub">Barbershop · Sistema de Gestão</p>
+  <div class="login-box">
+    <div class="form-group"><label>Usuário</label><input type="text" id="login-user" placeholder="Seu usuário" autocomplete="username"></div>
+    <div class="form-group"><label>Senha</label><input type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password"></div>
+    <button class="btn-gold" onclick="doLogin()">ENTRAR NO SISTEMA</button>
+    <a class="forgot-link" onclick="openRecoverModal()">🔑 Esqueci minha senha</a>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app">
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img id="sidebar-logo-img" src="" alt="Logo" onerror="this.style.display='none';this.parentElement.textContent='✂️';this.parentElement.style.fontSize='18px'">
+      </div>
+      <div class="sidebar-brand"><h2>IMPERADOR</h2><span>Barbershop Premium</span></div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <div class="nav-item active" onclick="navigate('dashboard',this)"><span class="icon">📊</span> Dashboard</div>
+      <div class="nav-item" onclick="navigate('agenda',this)"><span class="icon">📅</span> Agendamentos <span class="nav-badge">8</span></div>
+      <div class="nav-section-title">Gestão</div>
+      <div class="nav-item" onclick="navigate('clientes',this)"><span class="icon">👥</span> Clientes</div>
+      <div class="nav-item" onclick="navigate('barbeiros',this)"><span class="icon">💈</span> Barbeiros</div>
+      <div class="nav-item" onclick="navigate('estoque',this)"><span class="icon">📦</span> Estoque <span class="nav-badge" style="background:#E05555">3</span></div>
+      <div class="nav-section-title">Financeiro</div>
+      <div class="nav-item" onclick="navigate('financeiro',this)"><span class="icon">💰</span> Financeiro</div>
+      <div class="nav-section-title">Sistema</div>
+      <div class="nav-item" onclick="navigate('config',this)"><span class="icon">⚙️</span> Configurações</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">G</div>
+        <div><div class="user-name">Grande</div><div class="user-role">Proprietário</div></div>
+        <span style="margin-left:auto;color:var(--text-dim);cursor:pointer;font-size:18px" onclick="logout()">⎋</span>
+      </div>
+    </div>
+  </nav>
+
+  <div id="main">
+    <div id="topbar">
+      <div class="topbar-left">
+        <button id="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+      </div>
+      <div class="search-bar">
+        <span style="color:var(--text-dim)">🔍</span>
+        <input type="text" placeholder="Buscar clientes, serviços..." oninput="globalSearch(this.value)">
+      </div>
+      <div class="topbar-right">
+        <div class="date-badge" id="current-date"></div>
+        <div class="notif-btn" onclick="showToast('Nenhuma notificação nova','success')">🔔<div class="notif-dot"></div></div>
+        <button class="btn-primary" onclick="openModal('agendamento')">+ Novo</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="section-header">
+        <h2>Visão <span>Geral</span></h2>
+        <div style="display:flex;gap:8px"><button class="btn-sm">Hoje</button><button class="btn-sm">7 dias</button><button class="btn-sm">Mês</button></div>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-icon">📅</div><div class="label">Agendamentos Hoje</div><div class="value">18</div><div class="change up">▲ 12% que ontem</div></div>
+        <div class="metric-card"><div class="metric-icon">👤</div><div class="label">Clientes Atendidos</div><div class="value">14</div><div class="change up">▲ 5 faltam hoje</div></div>
+        <div class="metric-card"><div class="metric-icon">💰</div><div class="label">Faturamento Hoje</div><div class="value gold">R$ 840</div><div class="change up">▲ 18% vs média</div></div>
+        <div class="metric-card"><div class="metric-icon">🎯</div><div class="label">Ticket Médio</div><div class="value">R$ 60</div><div class="change up">▲ R$ 5 vs mês</div></div>
+      </div>
+      <div class="chart-grid">
+        <div class="chart-card"><h3>Faturamento Semanal</h3><div class="chart-wrap"><canvas id="revenueChart"></canvas></div></div>
+        <div class="chart-card"><h3>Serviços Mais Vendidos</h3><div class="chart-wrap"><canvas id="servicesChart"></canvas></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+        <div class="chart-card"><h3>Horários de Pico</h3><div class="chart-wrap"><canvas id="peakChart"></canvas></div></div>
+        <div class="chart-card">
+          <h3>Desempenho dos Barbeiros</h3>
+          <div style="margin-top:6px">
+            <div class="ring-container"><span style="font-size:12px;min-width:90px">Marcus Silva</span><div class="progress-bar"><div class="progress-fill" style="width:92%"></div></div><span class="ring-value">92%</span></div>
+            <div class="ring-container"><span style="font-size:12px;min-width:90px">Diego Costa</span><div class="progress-bar"><div class="progress-fill" style="width:84%"></div></div><span class="ring-value">84%</span></div>
+            <div class="ring-container"><span style="font-size:12px;min-width:90px">Rafael Mendes</span><div class="progress-bar"><div class="progress-fill" style="width:76%"></div></div><span class="ring-value">76%</span></div>
+            <div class="ring-container"><span style="font-size:12px;min-width:90px">Lucas Pereira</span><div class="progress-bar"><div class="progress-fill" style="width:68%"></div></div><span class="ring-value">68%</span></div>
+            <div class="gold-divider"></div>
+            <div style="font-size:11px;color:var(--text-muted)">Baseado em avaliações e volume de atendimentos</div>
+          </div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-card-header"><h3>📋 Agenda de Hoje</h3><button class="btn-sm" onclick="navigate('agenda',document.querySelector('[onclick*=agenda]'))">Ver tudo</button></div>
+        <table><thead><tr><th>Horário</th><th>Cliente</th><th>Serviço</th><th>Barbeiro</th><th>Valor</th><th>Status</th></tr></thead><tbody id="today-appointments"></tbody></table>
+      </div>
+    </div>
+
+    <!-- AGENDA -->
+    <div class="page" id="page-agenda">
+      <div class="section-header">
+        <h2>Agenda <span>do Dia</span></h2>
+        <button class="btn-primary" onclick="openModal('agendamento')">+ Novo Agendamento</button>
+      </div>
+      <div class="schedule-grid">
+        <div>
+          <div class="table-card" style="margin-bottom:0">
+            <div class="table-card-header"><h3>🕐 Horários de Hoje</h3></div>
+            <div style="padding:14px"><div class="time-slots" id="time-slots-list"></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="chart-card" style="margin-bottom:14px">
+            <h3>Resumo do Dia</h3>
+            <div class="metrics-grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0">
+              <div class="metric-card" style="padding:13px"><div class="label" style="margin-bottom:5px">Confirmados</div><div class="value" style="font-size:22px;color:var(--green)">8</div></div>
+              <div class="metric-card" style="padding:13px"><div class="label" style="margin-bottom:5px">Em Andamento</div><div class="value" style="font-size:22px;color:var(--gold)">2</div></div>
+              <div class="metric-card" style="padding:13px"><div class="label" style="margin-bottom:5px">Concluídos</div><div class="value" style="font-size:22px;color:var(--blue)">4</div></div>
+              <div class="metric-card" style="padding:13px"><div class="label" style="margin-bottom:5px">Cancelados</div><div class="value" style="font-size:22px;color:var(--red)">1</div></div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>Lista de Espera</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface2);border-radius:8px">
+                <span>👤</span><div><div style="font-size:13px;font-weight:600">Carlos Eduardo</div><div style="font-size:11px;color:var(--text-dim)">Corte + Barba · ~30 min</div></div>
+                <button class="btn-sm" style="margin-left:auto" onclick="showToast('Carlos alocado!','success')">Alocar</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface2);border-radius:8px">
+                <span>👤</span><div><div style="font-size:13px;font-weight:600">Fábio Alves</div><div style="font-size:11px;color:var(--text-dim)">Corte · ~20 min</div></div>
+                <button class="btn-sm" style="margin-left:auto" onclick="showToast('Fábio alocado!','success')">Alocar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div class="page" id="page-clientes">
+      <div class="section-header">
+        <h2>Gestão de <span>Clientes</span></h2>
+        <div style="display:flex;gap:8px">
+          <input type="text" placeholder="🔍 Buscar..." oninput="renderClients(this.value)"
+            style="padding:8px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;font-family:'DM Sans',sans-serif;width:180px;transition:border .2s">
+          <button class="btn-primary" onclick="openModal('cliente')">+ Novo Cliente</button>
+        </div>
+      </div>
+      <div class="metrics-grid" style="margin-bottom:20px">
+        <div class="metric-card"><div class="metric-icon">👥</div><div class="label">Total Clientes</div><div class="value">247</div><div class="change up">▲ 12 este mês</div></div>
+        <div class="metric-card"><div class="metric-icon">🔄</div><div class="label">Recorrentes</div><div class="value">189</div><div class="change up">76% da base</div></div>
+        <div class="metric-card"><div class="metric-icon">🎂</div><div class="label">Aniversariantes</div><div class="value gold">4</div><div class="change" style="color:var(--gold)">este mês</div></div>
+        <div class="metric-card"><div class="metric-icon">⭐</div><div class="label">Fidelidade Ativa</div><div class="value">134</div><div class="change up">▲ 8 novas</div></div>
+      </div>
+      <div class="client-list" id="client-list"></div>
+    </div>
+
+    <!-- BARBEIROS -->
+    <div class="page" id="page-barbeiros">
+      <div class="section-header">
+        <h2>Equipe de <span>Barbeiros</span></h2>
+        <button class="btn-primary" onclick="openModal('barbeiro')">+ Adicionar Barbeiro</button>
+      </div>
+      <div class="barbers-grid" id="barbers-grid"></div>
+      <div class="table-card">
+        <div class="table-card-header"><h3>🏆 Ranking do Mês</h3></div>
+        <table><thead><tr><th>#</th><th>Barbeiro</th><th>Atendimentos</th><th>Faturamento</th><th>Comissão 40%</th><th>Nota</th><th>Ações</th></tr></thead><tbody id="barber-ranking"></tbody></table>
+      </div>
+    </div>
+
+    <!-- FINANCEIRO -->
+    <div class="page" id="page-financeiro">
+      <div class="section-header">
+        <h2>Controle <span>Financeiro</span></h2>
+        <div style="display:flex;gap:8px">
+          <button class="btn-sm" onclick="exportPDF()">📄 Exportar PDF</button>
+          <button class="btn-sm" onclick="exportExcel()">📊 Exportar Excel</button>
+        </div>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-icon">📈</div><div class="label">Faturamento Mensal</div><div class="value gold">R$ 21.840</div><div class="change up">▲ 14% vs mês anterior</div></div>
+        <div class="metric-card"><div class="metric-icon">💸</div><div class="label">Despesas Mensais</div><div class="value">R$ 7.200</div><div class="change down">▼ Aluguel + comissões</div></div>
+        <div class="metric-card"><div class="metric-icon">💎</div><div class="label">Lucro Líquido</div><div class="value gold">R$ 14.640</div><div class="change up">▲ 67% de margem</div></div>
+        <div class="metric-card"><div class="metric-icon">🎯</div><div class="label">Meta do Mês</div><div class="value">87%</div><div class="change up">R$ 21.840 / R$ 25.000</div></div>
+      </div>
+      <div class="fin-row">
+        <div class="chart-card"><h3>Fluxo de Caixa — Últimos 30 Dias</h3><div class="chart-wrap"><canvas id="cashflowChart"></canvas></div></div>
+        <div class="chart-card">
+          <h3>Métodos de Pagamento</h3>
+          <div class="payment-methods">
+            <div class="pm-item"><span class="pm-label">PIX</span><div class="pm-bar-wrap"><div class="pm-bar" style="width:62%"></div></div><span class="pm-value">62%</span></div>
+            <div class="pm-item"><span class="pm-label">Cartão Déb.</span><div class="pm-bar-wrap"><div class="pm-bar" style="width:21%"></div></div><span class="pm-value">21%</span></div>
+            <div class="pm-item"><span class="pm-label">Cartão Créd.</span><div class="pm-bar-wrap"><div class="pm-bar" style="width:11%"></div></div><span class="pm-value">11%</span></div>
+            <div class="pm-item"><span class="pm-label">Dinheiro</span><div class="pm-bar-wrap"><div class="pm-bar" style="width:6%"></div></div><span class="pm-value">6%</span></div>
+          </div>
+          <div class="gold-divider"></div>
+          <h3 style="margin-top:0">Lucro por Serviço</h3>
+          <div class="chart-wrap" style="height:150px"><canvas id="profitChart"></canvas></div>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-card-header"><h3>📋 Últimas Transações</h3></div>
+        <table><thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th><th>Método</th></tr></thead><tbody id="transactions-table"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ESTOQUE -->
+    <div class="page" id="page-estoque">
+      <div class="section-header">
+        <h2>Controle de <span>Estoque</span></h2>
+        <button class="btn-primary" onclick="openModal('produto')">+ Adicionar Produto</button>
+      </div>
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-icon">📦</div><div class="label">Total Produtos</div><div class="value" id="sk-total">12</div></div>
+        <div class="metric-card"><div class="metric-icon">⚠️</div><div class="label">Estoque Baixo</div><div class="value" style="color:var(--gold)" id="sk-low">3</div></div>
+        <div class="metric-card"><div class="metric-icon">❌</div><div class="label">Esgotados</div><div class="value" style="color:var(--red)" id="sk-zero">1</div></div>
+        <div class="metric-card"><div class="metric-icon">🔔</div><div class="label">Total em Alerta</div><div class="value gold" id="sk-alert">4</div></div>
+      </div>
+      <div class="stock-grid" id="stock-grid"></div>
+    </div>
+
+    <!-- CONFIG -->
+    <div class="page" id="page-config">
+      <div class="section-header"><h2>Configurações <span>do Sistema</span></h2></div>
+      <div class="config-section">
+        <h3>🏪 Dados da Barbearia</h3>
+        <div class="form-grid-2">
+          <div class="form-group"><label>Nome</label><input type="text" value="Kontainer do Imperador"></div>
+          <div class="form-group"><label>WhatsApp</label><input type="text" value="(21) 99999-9999"></div>
+          <div class="form-group"><label>Endereço</label><input type="text" value="Rio de Janeiro, RJ"></div>
+          <div class="form-group"><label>CNPJ</label><input type="text" value="00.000.000/0001-00"></div>
+        </div>
+        <button class="btn-primary" onclick="showToast('Dados salvos!','success')">Salvar Alterações</button>
+      </div>
+      <div class="config-section">
+        <h3>⚙️ Preferências</h3>
+        <div class="config-row">
+          <div><div class="cr-label">Notificações por WhatsApp</div><div class="cr-sub">Confirmações automáticas</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="config-row">
+          <div><div class="cr-label">Lembretes 1h antes</div><div class="cr-sub">Notificar clientes</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="config-row">
+          <div><div class="cr-label">Alertas de estoque baixo</div><div class="cr-sub">Notificar abaixo do mínimo</div></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="config-row">
+          <div><div class="cr-label" id="theme-label">🌙 Modo Escuro ativo</div><div class="cr-sub">Clique para alternar o tema</div></div>
+          <div class="toggle on" id="dark-mode-toggle" onclick="toggleDarkMode()"></div>
+        </div>
+        <div class="config-row">
+          <div><div class="cr-label">IA de sugestão de horários</div><div class="cr-sub">Análise preditiva</div></div>
+          <div class="toggle" onclick="this.classList.toggle('on');showToast('IA de horários ativada!','success')"></div>
+        </div>
+      </div>
+      <div class="config-section">
+        <h3>💰 Comissões</h3>
+        <div class="config-row">
+          <div><div class="cr-label">Comissão padrão</div><div class="cr-sub">Aplicada a todos os barbeiros</div></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" value="40" style="width:65px;padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;outline:none;text-align:center;font-family:'DM Sans',sans-serif">
+            <span style="color:var(--text-muted)">%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL OVERLAY -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOverlay(event)">
+  <div id="modal-content"></div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+'use strict';
+
+// ══════════════════════════════════════
+// LOGO — embed the barbershop logo as base64 data URI
+// Since we can't hotlink external images reliably, we use an SVG placeholder
+// that mimics the black+gold style. Replace LOGO_DATA_URI with a real base64
+// image if you have the file locally.
+// ══════════════════════════════════════
+const LOGO_SVG = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="100" fill="#0A0A0A"/>
+  <circle cx="100" cy="100" r="94" fill="none" stroke="#C9A84C" stroke-width="2"/>
+  <!-- Crown -->
+  <polygon points="100,18 112,38 130,28 122,50 78,50 70,28 88,38" fill="#C9A84C"/>
+  <!-- Barber pole -->
+  <rect x="88" y="50" width="24" height="70" rx="3" fill="#fff"/>
+  <path d="M88 55 Q100 60 112 55 Q100 65 88 70 Q100 75 112 70 Q100 80 88 85 Q100 90 112 85 Q100 95 88 100 Q100 105 112 100 Q100 110 88 115 Q100 120 112 115" fill="none" stroke="#C9A84C" stroke-width="6"/>
+  <rect x="85" y="48" width="30" height="6" rx="2" fill="#C9A84C"/>
+  <rect x="85" y="118" width="30" height="6" rx="2" fill="#C9A84C"/>
+  <!-- Decorative arcs -->
+  <path d="M50 110 Q70 75 100 68 Q130 75 150 110" fill="none" stroke="#C9A84C" stroke-width="3"/>
+  <path d="M42 118 Q65 78 100 70 Q135 78 158 118" fill="none" stroke="#C9A84C" stroke-width="1.5" opacity=".4"/>
+  <!-- Text -->
+  <text x="100" y="145" font-family="Georgia,serif" font-size="9" fill="#aaa" text-anchor="middle" letter-spacing="3">KONTAINER DO</text>
+  <text x="100" y="163" font-family="Georgia,serif" font-size="17" font-weight="bold" fill="#fff" text-anchor="middle" letter-spacing="1">IMPERADOR</text>
+  <text x="100" y="177" font-family="Georgia,serif" font-size="8" fill="#C9A84C" text-anchor="middle" letter-spacing="3">BARBERSHOP</text>
+  <!-- Mustache -->
+  <path d="M84 185 Q92 180 100 184 Q108 180 116 185 Q108 192 100 188 Q92 192 84 185Z" fill="#C9A84C"/>
+</svg>`)}`;
+
+// Set logo everywhere
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#login-logo-img,#sidebar-logo-img').forEach(img => {
+    img.src = LOGO_SVG;
+    img.style.display = 'block';
+  });
+});
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let nextId = 100;
+let DATA = {
+  appointments: [
+    {id:1,time:'08:00',client:'Bruno Andrade',service:'Corte + Barba',barber:'Marcus Silva',value:75,status:'done'},
+    {id:2,time:'08:30',client:'Thiago Lima',service:'Corte Social',barber:'Diego Costa',value:45,status:'done'},
+    {id:3,time:'09:00',client:'Felipe Souza',service:'Navalhada',barber:'Marcus Silva',value:35,status:'done'},
+    {id:4,time:'09:30',client:'Matheus Rocha',service:'Corte + Barba + Sobrancelha',barber:'Rafael Mendes',value:90,status:'done'},
+    {id:5,time:'10:00',client:'André Costa',service:'Corte Degradê',barber:'Lucas Pereira',value:55,status:'progress'},
+    {id:6,time:'10:30',client:'Guilherme Neto',service:'Barba Completa',barber:'Marcus Silva',value:45,status:'progress'},
+    {id:7,time:'11:00',client:'Ricardo Alves',service:'Corte + Barba',barber:'Diego Costa',value:75,status:'confirmed'},
+    {id:8,time:'11:30',client:'Caio Monteiro',service:'Corte Social',barber:'Rafael Mendes',value:45,status:'confirmed'},
+    {id:9,time:'12:00',client:'Leonardo Brito',service:'Corte Degradê',barber:'Marcus Silva',value:55,status:'confirmed'},
+    {id:10,time:'14:00',client:'Victor Hugo',service:'Corte + Barba + Sobrancelha',barber:'Lucas Pereira',value:90,status:'confirmed'},
+    {id:11,time:'14:30',client:'Danilo Ferreira',service:'Navalhada',barber:'Diego Costa',value:35,status:'confirmed'},
+    {id:12,time:'15:00',client:'Paulo Henrique',service:'Corte Social',barber:'Marcus Silva',value:45,status:'confirmed'},
+    {id:13,time:'15:30',client:'---',service:'Horário livre',barber:'Rafael Mendes',value:0,status:'empty'},
+    {id:14,time:'16:00',client:'Rodrigo Matos',service:'Corte Degradê',barber:'Diego Costa',value:55,status:'confirmed'},
+    {id:15,time:'17:00',client:'Marcelo Santos',service:'Corte + Barba',barber:'Marcus Silva',value:75,status:'cancelled'},
+    {id:16,time:'18:00',client:'---',service:'Horário livre',barber:'Lucas Pereira',value:0,status:'empty'},
+  ],
+  clients: [
+    {id:1,name:'Bruno Andrade',phone:'(21) 99123-4567',lastVisit:'19/05/2025',visits:34,service:'Corte + Barba',loyalty:'Ouro'},
+    {id:2,name:'Thiago Lima',phone:'(21) 98765-4321',lastVisit:'18/05/2025',visits:28,service:'Corte Social',loyalty:'Prata'},
+    {id:3,name:'Felipe Souza',phone:'(21) 99456-7890',lastVisit:'17/05/2025',visits:22,service:'Navalhada',loyalty:'Prata'},
+    {id:4,name:'Matheus Rocha',phone:'(21) 97654-3210',lastVisit:'16/05/2025',visits:18,service:'Corte + Barba + Sobrancelha',loyalty:'Bronze'},
+    {id:5,name:'André Costa',phone:'(21) 99876-5432',lastVisit:'15/05/2025',visits:45,service:'Corte Degradê',loyalty:'Diamante'},
+    {id:6,name:'Guilherme Neto',phone:'(21) 98234-5678',lastVisit:'14/05/2025',visits:12,service:'Barba Completa',loyalty:'Bronze'},
+    {id:7,name:'Ricardo Alves',phone:'(21) 99345-6789',lastVisit:'13/05/2025',visits:31,service:'Corte + Barba',loyalty:'Ouro'},
+    {id:8,name:'Caio Monteiro',phone:'(21) 97890-1234',lastVisit:'12/05/2025',visits:9,service:'Corte Social',loyalty:'Bronze'},
+  ],
+  barbers: [
+    {id:1,name:'Marcus Silva',role:'Master Barber',avatar:'M',atendimentos:148,faturamento:8880,nota:4.9,meta:92},
+    {id:2,name:'Diego Costa',role:'Senior Barber',avatar:'D',atendimentos:124,faturamento:7440,nota:4.8,meta:84},
+    {id:3,name:'Rafael Mendes',role:'Barber',avatar:'R',atendimentos:98,faturamento:5880,nota:4.7,meta:76},
+    {id:4,name:'Lucas Pereira',role:'Barber Junior',avatar:'L',atendimentos:78,faturamento:4680,nota:4.6,meta:68},
+  ],
+  stock: [
+    {id:1,name:'Pomada Capilar Black',cat:'Finalizadores',qty:8,min:5,unit:'und'},
+    {id:2,name:'Óleo para Barba',cat:'Barba',qty:3,min:5,unit:'und'},
+    {id:3,name:'Shampoo Anti-Caspa',cat:'Cabelo',qty:12,min:4,unit:'und'},
+    {id:4,name:'Gilete/Navalha Descartável',cat:'Corte',qty:2,min:10,unit:'cx'},
+    {id:5,name:'Cera Modeladora',cat:'Finalizadores',qty:6,min:4,unit:'und'},
+    {id:6,name:'Álcool 70%',cat:'Higiene',qty:4,min:3,unit:'L'},
+    {id:7,name:'Talco Antisséptico',cat:'Higiene',qty:9,min:3,unit:'und'},
+    {id:8,name:'Condicionador Barba',cat:'Barba',qty:1,min:4,unit:'und'},
+    {id:9,name:'Pó Descolorante',cat:'Coloração',qty:5,min:3,unit:'kg'},
+    {id:10,name:'Oxidante 20vol',cat:'Coloração',qty:7,min:4,unit:'L'},
+    {id:11,name:'Protetor Auricular',cat:'Corte',qty:200,min:50,unit:'par'},
+    {id:12,name:'Borrifador de Água',cat:'Equipamento',qty:4,min:2,unit:'und'},
+  ],
+  transactions: [
+    {date:'19/05',desc:'Atendimentos do dia',type:'entrada',value:840,method:'PIX'},
+    {date:'19/05',desc:'Compra produtos estoque',type:'saida',value:340,method:'PIX'},
+    {date:'18/05',desc:'Atendimentos do dia',type:'entrada',value:720,method:'Misto'},
+    {date:'18/05',desc:'Material de limpeza',type:'saida',value:85,method:'Dinheiro'},
+    {date:'17/05',desc:'Atendimentos do dia',type:'entrada',value:960,method:'Misto'},
+    {date:'16/05',desc:'Aluguel mensal',type:'saida',value:2800,method:'Transferência'},
+    {date:'15/05',desc:'Atendimentos do dia',type:'entrada',value:780,method:'PIX'},
+  ]
+};
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+function init(){
+  setDate(); renderAppointments(); renderTimeSlots();
+  renderClients(); renderBarbers(); renderStock(); renderTransactions();
+  setTimeout(initCharts,150);
+}
+function setDate(){
+  document.getElementById('current-date').textContent =
+    new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short'});
+}
+
+// ══════════════════════════════════════
+// LOGIN / LOGOUT
+// ══════════════════════════════════════
+const CREDS = {user:'Grande', pass:'12345'};
+
+function doLogin(){
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if(u===CREDS.user && p===CREDS.pass){
+    const ls=document.getElementById('login-screen');
+    ls.style.transition='opacity .5s'; ls.style.opacity='0';
+    setTimeout(()=>{ls.style.display='none';document.getElementById('app').classList.add('active');init();},500);
+  } else {
+    showToast('Usuário ou senha incorretos','error');
+    document.getElementById('login-pass').value='';
+    document.getElementById('login-pass').focus();
+  }
+}
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('login-user').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-pass').focus();});
+
+function logout(){
+  document.getElementById('app').classList.remove('active');
+  const ls=document.getElementById('login-screen');
+  ls.style.display='flex'; ls.style.opacity='1';
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
+}
+
+// ══════════════════════════════════════
+// RECOVER PASSWORD MODAL
+// ══════════════════════════════════════
+function openRecoverModal(){
+  const html=`
+    <h2>🔑 Recuperar Senha</h2>
+    <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px;line-height:1.6">
+      Informe seu usuário abaixo. As instruções de recuperação serão enviadas para o WhatsApp cadastrado.
+    </p>
+    <div class="form-group"><label>Usuário</label><input type="text" id="rec-user" placeholder="Seu nome de usuário"></div>
+    <div class="form-group"><label>WhatsApp cadastrado</label><input type="text" id="rec-phone" placeholder="(21) 99999-9999"></div>
+    <div class="modal-actions">
+      <button class="btn-sm" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="sendRecovery()">📲 Enviar Recuperação</button>
+    </div>`;
+  // show modal even before login
+  const mc=document.getElementById('modal-content');
+  mc.className='modal'; mc.innerHTML=html;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function sendRecovery(){
+  const u=document.getElementById('rec-user').value.trim();
+  const p=document.getElementById('rec-phone').value.trim();
+  if(!u||!p){showToast('Preencha todos os campos','error');return;}
+  closeModal();
+  showToast('Instruções enviadas para o WhatsApp!','success');
+}
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function navigate(page,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(el) el.classList.add('active');
+  const T={dashboard:'Dashboard',agenda:'Agendamentos',clientes:'Clientes',barbeiros:'Barbeiros',financeiro:'Financeiro',estoque:'Estoque',config:'Configurações'};
+  document.getElementById('topbar-title').textContent=T[page]||page;
+  if(window.innerWidth<900) document.getElementById('sidebar').classList.remove('open');
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+
+// ══════════════════════════════════════
+// DARK / LIGHT MODE
+// ══════════════════════════════════════
+function toggleDarkMode(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  const tog=document.getElementById('dark-mode-toggle');
+  const lbl=document.getElementById('theme-label');
+  if(isDark){tog.classList.remove('on');lbl.textContent='☀️ Modo Claro ativo';}
+  else{tog.classList.add('on');lbl.textContent='🌙 Modo Escuro ativo';}
+  showToast(isDark?'☀️ Modo claro ativado':'🌙 Modo escuro ativado','success');
+}
+
+// ══════════════════════════════════════
+// RENDER — DASHBOARD APPOINTMENTS
+// ══════════════════════════════════════
+const SL={done:'✅ Concluído',progress:'⚡ Em andamento',confirmed:'📋 Confirmado',cancelled:'❌ Cancelado',empty:'—'};
+function renderAppointments(){
+  document.getElementById('today-appointments').innerHTML=
+    DATA.appointments.slice(0,8).map(a=>`
+      <tr>
+        <td><strong>${a.time}</strong></td><td>${a.client}</td><td>${a.service}</td>
+        <td style="color:var(--gold)">${a.barber}</td>
+        <td>${a.value>0?'R$ '+a.value:'—'}</td>
+        <td><span class="badge ${a.status}">${SL[a.status]||a.status}</span></td>
+      </tr>`).join('');
+}
+
+// ══════════════════════════════════════
+// RENDER — TIME SLOTS (with edit/delete)
+// ══════════════════════════════════════
+function renderTimeSlots(){
+  const SI={done:'✅',progress:'⚡',confirmed:'📋',cancelled:'❌'};
+  document.getElementById('time-slots-list').innerHTML=
+    DATA.appointments.map(a=>`
+      <div class="time-slot ${a.status==='empty'?'empty':''}">
+        <span class="ts-time">${a.time}</span>
+        <div class="ts-info">
+          <div class="ts-name">${a.client}</div>
+          <div class="ts-service">${a.service}</div>
+          <div class="ts-barber">${a.status!=='empty'?a.barber:''}</div>
+        </div>
+        ${a.status!=='empty'?`
+          <span class="badge ${a.status}" style="font-size:10px">${SI[a.status]||''}</span>
+          <div class="ts-actions">
+            <button class="btn-edit" style="padding:5px 9px;font-size:11px" onclick="editAppointment(${a.id})">✏️</button>
+            <button class="btn-danger" style="padding:5px 9px;font-size:11px" onclick="deleteAppointment(${a.id})">🗑️</button>
+          </div>`
+        :'<span style="color:var(--text-dim);font-size:12px">Disponível</span>'}
+      </div>`).join('');
+}
+
+function editAppointment(id){
+  const a=DATA.appointments.find(x=>x.id===id); if(!a) return;
+  openModalRaw(`
+    <h2>✏️ Editar Agendamento</h2>
+    <div class="form-grid-2">
+      <div class="form-group"><label>Cliente</label><input id="ea-c" type="text" value="${a.client}"></div>
+      <div class="form-group"><label>Horário</label><input id="ea-t" type="time" value="${a.time}"></div>
+      <div class="form-group"><label>Barbeiro</label><select id="ea-b">
+        ${DATA.barbers.map(b=>`<option ${b.name===a.barber?'selected':''}>${b.name}</option>`).join('')}
+      </select></div>
+      <div class="form-group"><label>Serviço</label><select id="ea-s">
+        ${['Corte + Barba','Corte Social','Barba Completa','Corte Degradê','Navalhada','Corte + Barba + Sobrancelha'].map(s=>`<option ${s===a.service?'selected':''}>${s}</option>`).join('')}
+      </select></div>
+      <div class="form-group"><label>Valor (R$)</label><input id="ea-v" type="number" value="${a.value}"></div>
+      <div class="form-group"><label>Status</label><select id="ea-st">
+        ${[['confirmed','Confirmado'],['progress','Em andamento'],['done','Concluído'],['cancelled','Cancelado']].map(([v,l])=>`<option value="${v}" ${v===a.status?'selected':''}>${l}</option>`).join('')}
+      </select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sm" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveAppointment(${id})">💾 Salvar</button>
+    </div>`);
+}
+function saveAppointment(id){
+  const a=DATA.appointments.find(x=>x.id===id); if(!a) return;
+  a.client=document.getElementById('ea-c').value;
+  a.time=document.getElementById('ea-t').value;
+  a.barber=document.getElementById('ea-b').value;
+  a.service=document.getElementById('ea-s').value;
+  a.value=parseFloat(document.getElementById('ea-v').value)||0;
+  a.status=document.getElementById('ea-st').value;
+  closeModal(); renderAppointments(); renderTimeSlots();
+  showToast('Agendamento atualizado!','success');
+}
+function deleteAppointment(id){
+  confirmAction('Excluir agendamento?','Esta ação não pode ser desfeita.',()=>{
+    DATA.appointments=DATA.appointments.filter(x=>x.id!==id);
+    renderAppointments(); renderTimeSlots();
+    showToast('Agendamento excluído','success');
+  });
+}
+
+// ══════════════════════════════════════
+// RENDER — CLIENTS
+// ══════════════════════════════════════
+const LC={Diamante:'progress',Ouro:'progress',Prata:'done',Bronze:'confirmed'};
+const LI={Diamante:'💎',Ouro:'🥇',Prata:'🥈',Bronze:'🥉'};
+function renderClients(filter=''){
+  const items=DATA.clients.filter(c=>!filter||c.name.toLowerCase().includes(filter.toLowerCase())||c.phone.includes(filter));
+  document.getElementById('client-list').innerHTML=items.length?items.map(c=>`
+    <div class="client-row">
+      <div class="c-avatar">👤</div>
+      <div class="c-info">
+        <div class="c-name">${c.name}</div>
+        <div class="c-meta">📱 ${c.phone} · Último: ${c.lastVisit} · ${c.service}</div>
+      </div>
+      <span class="badge ${LC[c.loyalty]||'confirmed'}" style="margin-right:6px;flex-shrink:0">${LI[c.loyalty]||'🥉'} ${c.loyalty}</span>
+      <div class="c-visits"><div class="v-num">${c.visits}</div><div class="v-lbl">visitas</div></div>
+      <div class="c-actions">
+        <button class="btn-edit" onclick="editClient(${c.id})">✏️ Editar</button>
+        <button class="btn-danger" onclick="deleteClient(${c.id})">🗑️</button>
+      </div>
+    </div>`).join('')
+  :'<div style="padding:24px;text-align:center;color:var(--text-muted)">Nenhum cliente encontrado</div>';
+}
+function editClient(id){
+  const c=DATA.clients.find(x=>x.id===id); if(!c) return;
+  openModalRaw(`
+    <h2>✏️ Editar Cliente</h2>
+    <div class="form-grid-2">
+      <div class="form-group"><label>Nome</label><input id="ec-n" type="text" value="${c.name}"></div>
+      <div class="form-group"><label>Telefone / WhatsApp</label><input id="ec-p" type="text" value="${c.phone}"></div>
+      <div class="form-group"><label>Última Visita</label><input id="ec-lv" type="text" value="${c.lastVisit}"></div>
+      <div class="form-group"><label>Total de Visitas</label><input id="ec-v" type="number" value="${c.visits}"></div>
+      <div class="form-group"><label>Serviço Favorito</label><select id="ec-s">
+        ${['Corte + Barba','Corte Social','Barba Completa','Corte Degradê','Navalhada','Corte + Barba + Sobrancelha'].map(s=>`<option ${s===c.service?'selected':''}>${s}</option>`).join('')}
+      </select></div>
+      <div class="form-group"><label>Fidelidade</label><select id="ec-l">
+        ${['Bronze','Prata','Ouro','Diamante'].map(l=>`<option ${l===c.loyalty?'selected':''}>${l}</option>`).join('')}
+      </select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sm" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveClient(${id})">💾 Salvar</button>
+    </div>`);
+}
+function saveClient(id){
+  const c=DATA.clients.find(x=>x.id===id); if(!c) return;
+  c.name=document.getElementById('ec-n').value;
+  c.phone=document.getElementById('ec-p').value;
+  c.lastVisit=document.getElementById('ec-lv').value;
+  c.visits=parseInt(document.getElementById('ec-v').value)||0;
+  c.service=document.getElementById('ec-s').value;
+  c.loyalty=document.getElementById('ec-l').value;
+  closeModal(); renderClients();
+  showToast('Cliente atualizado!','success');
+}
+function deleteClient(id){
+  const c=DATA.clients.find(x=>x.id===id);
+  confirmAction(`Excluir ${c?c.name:'cliente'}?`,'Esta ação não pode ser desfeita.',()=>{
+    DATA.clients=DATA.clients.filter(x=>x.id!==id);
+    renderClients(); showToast('Cliente excluído','success');
+  });
+}
+
+// ══════════════════════════════════════
+// RENDER — BARBERS
+// ══════════════════════════════════════
+function renderBarbers(){
+  document.getElementById('barbers-grid').innerHTML=DATA.barbers.map(b=>`
+    <div class="barber-card">
+      <div class="barber-avatar">${b.avatar}</div>
+      <h3>${b.name}</h3>
+      <div class="role">${b.role}</div>
+      <div class="stars">${'★'.repeat(Math.floor(b.nota))}${'☆'.repeat(5-Math.floor(b.nota))} ${b.nota}</div>
+      <div class="barber-stats">
+        <div class="barber-stat"><div class="s-val">${b.atendimentos}</div><div class="s-lbl">Atendimentos</div></div>
+        <div class="barber-stat"><div class="s-val">R$ ${Math.round(b.faturamento*.4/1000)}k</div><div class="s-lbl">Comissão</div></div>
+      </div>
+      <div class="barber-actions">
+        <button class="btn-edit" onclick="editBarber(${b.id})">✏️ Editar</button>
+        <button class="btn-danger" onclick="deleteBarber(${b.id})">🗑️</button>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('barber-ranking').innerHTML=DATA.barbers.map((b,i)=>`
+    <tr>
+      <td><strong style="color:var(--gold)">#${i+1}</strong></td>
+      <td><strong>${b.name}</strong></td>
+      <td>${b.atendimentos}</td>
+      <td>R$ ${b.faturamento.toLocaleString('pt-BR')}</td>
+      <td style="color:var(--green)">R$ ${Math.round(b.faturamento*.4).toLocaleString('pt-BR')}</td>
+      <td><span style="color:var(--gold)">★ ${b.nota}</span></td>
+      <td><div style="display:flex;gap:5px">
+        <button class="btn-edit" onclick="editBarber(${b.id})">✏️</button>
+        <button class="btn-danger" onclick="deleteBarber(${b.id})">🗑️</button>
+      </div></td>
+    </tr>`).join('');
+}
+function editBarber(id){
+  const b=DATA.barbers.find(x=>x.id===id); if(!b) return;
+  openModalRaw(`
+    <h2>✏️ Editar Barbeiro</h2>
+    <div class="form-grid-2">
+      <div class="form-group"><label>Nome</label><input id="eb-n" type="text" value="${b.name}"></div>
+      <div class="form-group"><label>Função</label><select id="eb-r">
+        ${['Master Barber','Senior Barber','Barber','Barber Junior'].map(r=>`<option ${r===b.role?'selected':''}>${r}</option>`).join('')}
+      </select></div>
+      <div class="form-group"><label>Atendimentos no Mês</label><input id="eb-a" type="number" value="${b.atendimentos}"></div>
+      <div class="form-group"><label>Faturamento (R$)</label><input id="eb-f" type="number" value="${b.faturamento}"></div>
+      <div class="form-group"><label>Nota Média (0–5)</label><input id="eb-no" type="number" value="${b.nota}" min="0" max="5" step="0.1"></div>
+      <div class="form-group"><label>Meta (%)</label><input id="eb-m" type="number" value="${b.meta}"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sm" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveBarber(${id})">💾 Salvar</button>
+    </div>`);
+}
+function saveBarber(id){
+  const b=DATA.barbers.find(x=>x.id===id); if(!b) return;
+  b.name=document.getElementById('eb-n').value;
+  b.role=document.getElementById('eb-r').value;
+  b.avatar=b.name.charAt(0).toUpperCase();
+  b.atendimentos=parseInt(document.getElementById('eb-a').value)||0;
+  b.faturamento=parseFloat(document.getElementById('eb-f').value)||0;
+  b.nota=parseFloat(document.getElementById('eb-no').value)||0;
+  b.meta=parseInt(document.getElementById('eb-m').value)||0;
+  closeModal(); renderBarbers();
+  showToast('Barbeiro atualizado!','success');
+}
+function deleteBarber(id){
+  const b=DATA.barbers.find(x=>x.id===id);
+  confirmAction(`Excluir ${b?b.name:'barbeiro'}?`,'Esta ação não pode ser desfeita.',()=>{
+    DATA.barbers=DATA.barbers.filter(x=>x.id!==id);
+    renderBarbers(); showToast('Barbeiro removido','success');
+  });
+}
+
+// ══════════════════════════════════════
+// RENDER — STOCK
+// ══════════════════════════════════════
+function renderStock(){
+  document.getElementById('stock-grid').innerHTML=DATA.stock.map(s=>{
+    const pct=Math.min(100,Math.round(s.qty/(s.min*2)*100));
+    const state=s.qty<=0?'critical':s.qty<s.min?'low':'ok';
+    return `
+      <div class="stock-item">
+        <div class="s-name">${s.name}</div>
+        <div class="s-cat">${s.cat}</div>
+        <div class="stock-bar-wrap"><div class="stock-bar ${state}" style="width:${pct}%"></div></div>
+        <div class="stock-qty">${s.qty} ${s.unit} · Mínimo: ${s.min}</div>
+        ${s.qty<s.min?`<div class="stock-alert">⚠️ ${s.qty===0?'E
