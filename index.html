@@ -1993,7 +1993,7 @@ window.addEventListener('load', window.initSupabase);
             <h3>👤 1. Selecionar Cliente</h3>
             <div class="client-search-wrap" id="client-search-wrap">
               <span class="search-icon">🔍</span>
-              <input type="text" id="sale-client-search" placeholder="Buscar cliente pelo nome ou telefone…" oninput="searchSaleClient(this.value)" autocomplete="off">
+              <input type="text" id="sale-client-search" placeholder="Buscar cliente pelo nome ou telefone…" oninput="searchSaleClient(this.value)" onfocus="searchSaleClient(this.value)" autocomplete="off">
               <div class="client-dropdown" id="client-dropdown" style="display:none"></div>
             </div>
             <div id="selected-client-box" style="display:none"></div>
@@ -2004,7 +2004,7 @@ window.addEventListener('load', window.initSupabase);
             <h3>📦 2. Adicionar Produtos</h3>
             <div class="product-search-wrap">
               <span class="search-icon">🔍</span>
-              <input type="text" id="sale-product-search" placeholder="Buscar produto no estoque…" oninput="searchSaleProduct(this.value)" autocomplete="off">
+              <input type="text" id="sale-product-search" placeholder="Buscar produto no estoque…" oninput="searchSaleProduct(this.value)" onfocus="searchSaleProduct(this.value)" autocomplete="off">
               <div class="product-dropdown" id="product-dropdown" style="display:none"></div>
             </div>
           </div>
@@ -2249,6 +2249,7 @@ const DEFAULT_DATA = {
     {id:12, name:'Borrifador de Água', cat:'Equipamento', qty:4, min:2, unit:'und', value:15},
   ],
   transactions: [],
+  sales: [],
   subscriptions: [],
   services: [
     {id:1, name:'Corte + Barba',                value:75, duration:45},
@@ -2276,6 +2277,7 @@ function saveToLocalStorage() {
   localStorage.setItem('ki_stock',         JSON.stringify(DATA.stock));
   localStorage.setItem('ki_subscriptions', JSON.stringify(DATA.subscriptions));
   localStorage.setItem('ki_services',      JSON.stringify(DATA.services));
+  localStorage.setItem('ki_sales',         JSON.stringify(DATA.sales || []));
   // Write-through: também salva no Supabase (debounced)
   scheduleCloudSave();
 }
@@ -2303,7 +2305,8 @@ async function saveToCloud() {
       barbers: DATA.barbers,
       stock: DATA.stock,
       subscriptions: DATA.subscriptions,
-      services: DATA.services
+      services: DATA.services,
+      sales: DATA.sales || []
     },
     updated_at: new Date().toISOString()
   };
@@ -2324,6 +2327,7 @@ async function loadFromCloud() {
   if (Array.isArray(d.stock))         DATA.stock         = d.stock;
   if (Array.isArray(d.subscriptions)) DATA.subscriptions = d.subscriptions;
   if (Array.isArray(d.services))      DATA.services      = d.services;
+  if (Array.isArray(d.sales))         DATA.sales         = d.sales;
   return true;
 }
 
@@ -2335,10 +2339,12 @@ function refreshAllViews() {
   renderBarbers();
   renderStock();
   renderServices();
+  renderSaleMetrics();
   rebuildFinanceFromSources();
   renderTransactions();
   renderFinanceMetrics();
   renderSubscriptionsTable();
+  renderSaleHistory(currentSaleHistoryFilter || 'todos');
   updateCounters();
   buildFinanceCharts();
 }
@@ -2363,6 +2369,7 @@ function startRealtimeSync() {
       if (Array.isArray(d.stock))         DATA.stock         = d.stock;
       if (Array.isArray(d.subscriptions)) DATA.subscriptions = d.subscriptions;
       if (Array.isArray(d.services))      DATA.services      = d.services;
+      if (Array.isArray(d.sales))         DATA.sales         = d.sales;
       refreshAllViews();
       showToast('Dados atualizados por outro usuário', 'success');
     })
@@ -2376,6 +2383,7 @@ function loadFromLocalStorage() {
   const s = localStorage.getItem('ki_stock');
   const sub = localStorage.getItem('ki_subscriptions');
   const srv = localStorage.getItem('ki_services');
+  const sales = localStorage.getItem('ki_sales');
   return {
     appointments:  a ? JSON.parse(a) : DEFAULT_DATA.appointments,
     clients:       c ? JSON.parse(c) : DEFAULT_DATA.clients,
@@ -2383,6 +2391,7 @@ function loadFromLocalStorage() {
     stock:         s ? JSON.parse(s) : DEFAULT_DATA.stock,
     subscriptions: sub ? JSON.parse(sub) : DEFAULT_DATA.subscriptions,
     services:      srv ? JSON.parse(srv) : DEFAULT_DATA.services,
+    sales:         sales ? JSON.parse(sales) : (DEFAULT_DATA.sales || []),
     transactions:  []
   };
 }
@@ -2406,10 +2415,12 @@ function init() {
   renderBarbers();
   renderStock();
   renderServices();
+  renderSaleMetrics();
   rebuildFinanceFromSources();
   renderTransactions();
   renderFinanceMetrics();
   renderSubscriptionsTable();
+  renderSaleHistory(currentSaleHistoryFilter || 'todos');
   updateCounters();
   setTimeout(initCharts, 100);
 }
@@ -2440,6 +2451,12 @@ function updateCounters() {
   if(el('stock-empty'))  el('stock-empty').textContent  = emptyItems;
   const badgeEl = el('badge-estoque');
   if(badgeEl) { badgeEl.textContent = lowItems + emptyItems; }
+  const salesToday = getSales().filter(s => isTodayISO(s.dateISO || s.createdAt)).length;
+  const badgeVendas = el('badge-vendas');
+  if(badgeVendas) {
+    badgeVendas.textContent = salesToday;
+    badgeVendas.style.display = salesToday > 0 ? 'inline-flex' : 'none';
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -2484,6 +2501,10 @@ document.getElementById('login-pass').addEventListener('keydown', e => { if(e.ke
 // NAVIGATION
 // ═══════════════════════════════════════════════════════════
 async function navigate(page, el) {
+  const saleHistoryPage = document.getElementById('page-vendas-historico');
+  const salePage = document.getElementById('page-vendas');
+  if(saleHistoryPage) saleHistoryPage.style.display = 'none';
+  if(salePage) salePage.style.display = '';
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
@@ -2491,7 +2512,7 @@ async function navigate(page, el) {
   document.getElementById('topbar-title').textContent = {
     dashboard:'Dashboard', agenda:'Agendamentos', clientes:'Clientes',
     barbeiros:'Barbeiros', servicos:'Serviços', assinaturas:'Assinaturas',
-    financeiro:'Financeiro', estoque:'Estoque', config:'Configurações'
+    financeiro:'Financeiro', estoque:'Estoque', vendas:'Vendas', config:'Configurações'
   }[page];
   if(window.innerWidth < 900) document.getElementById('sidebar').classList.remove('open');
   // Sync ao trocar de página — garante dados atualizados de outros usuários
@@ -2712,6 +2733,7 @@ function saveClient(id) {
   saveToLocalStorage();
   closeModal();
   renderClients();
+  refreshSalePickers();
   showToast(`Cliente ${name} atualizado!`, 'success');
 }
 
@@ -3071,6 +3093,7 @@ function createClient() {
   saveToLocalStorage();
   closeModal();
   renderClients();
+  refreshSalePickers();
   showToast('Cliente cadastrado com sucesso!', 'success');
 }
 
@@ -3111,6 +3134,7 @@ function createProduct() {
   saveToLocalStorage();
   closeModal();
   renderStock();
+  refreshSalePickers();
   showToast('Produto adicionado ao estoque!', 'success');
 }
 
@@ -3575,6 +3599,446 @@ Obrigado por fazer parte da Kontainer do Imperador! ♟️`;
 
 
 
+
+// ═══════════════════════════════════════════════════════════
+// VENDAS — Integração com Clientes e Estoque
+// ═══════════════════════════════════════════════════════════
+let saleState = { client: null, cart: [], payment: 'PIX' };
+let currentSaleHistoryFilter = 'todos';
+
+function getSales() {
+  if(!Array.isArray(DATA.sales)) DATA.sales = [];
+  return DATA.sales;
+}
+
+function normalizeSaleText(str) {
+  return String(str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function isTodayISO(iso) {
+  if(!iso) return false;
+  const d = new Date(iso);
+  if(Number.isNaN(d.getTime())) return false;
+  const today = new Date();
+  return d.getFullYear() === today.getFullYear() && d.getMonth() === today.getMonth() && d.getDate() === today.getDate();
+}
+
+function formatMoney(value) {
+  return (Number(value) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function refreshSalePickers() {
+  const active = document.activeElement;
+  const clientInput = document.getElementById('sale-client-search');
+  const productInput = document.getElementById('sale-product-search');
+  if(active === clientInput) searchSaleClient(clientInput.value || '');
+  if(active === productInput) searchSaleProduct(productInput.value || '');
+  renderSaleCart();
+  updateOrderSummary();
+}
+
+function searchSaleClient(query = '') {
+  const dropdown = document.getElementById('client-dropdown');
+  if(!dropdown) return;
+  const q = normalizeSaleText(query);
+  const items = DATA.clients
+    .filter(c => !q || normalizeSaleText(c.name).includes(q) || normalizeSaleText(c.phone).includes(q))
+    .slice(0, 20);
+
+  if(items.length === 0) {
+    dropdown.innerHTML = `<div style="padding:14px 16px;color:var(--text-muted);font-size:13px">Nenhum cliente cadastrado/encontrado. Cadastre no módulo de Clientes.</div>`;
+    dropdown.style.display = 'block';
+    return;
+  }
+
+  dropdown.innerHTML = items.map(c => `
+    <div class="client-option" onclick="selectSaleClient(${c.id})">
+      <div class="co-avatar">${escHtml((c.name || '?').charAt(0).toUpperCase())}</div>
+      <div>
+        <div class="co-name">${escHtml(c.name)}</div>
+        <div class="co-phone">${escHtml(c.phone || 'telefone não informado')}</div>
+      </div>
+    </div>
+  `).join('');
+  dropdown.style.display = 'block';
+}
+
+function selectSaleClient(id) {
+  const c = DATA.clients.find(x => x.id === id);
+  if(!c) return;
+  saleState.client = { id: c.id, name: c.name, phone: c.phone || '', loyalty: c.loyalty || 'Bronze' };
+  const input = document.getElementById('sale-client-search');
+  const dropdown = document.getElementById('client-dropdown');
+  const box = document.getElementById('selected-client-box');
+  if(input) input.value = c.name;
+  if(dropdown) dropdown.style.display = 'none';
+  if(box) {
+    box.style.display = 'block';
+    box.innerHTML = `
+      <div class="selected-client">
+        <div class="sc-avatar">${escHtml((c.name || '?').charAt(0).toUpperCase())}</div>
+        <div class="sc-info">
+          <div class="sc-name">${escHtml(c.name)}</div>
+          <div class="sc-meta">${escHtml(c.phone || 'telefone não informado')} · ${escHtml(c.loyalty || 'Bronze')}</div>
+        </div>
+        <button class="icon-btn delete" data-tip="Remover cliente" onclick="clearSaleClient()">×</button>
+      </div>`;
+  }
+  updateOrderSummary();
+}
+
+function clearSaleClient() {
+  saleState.client = null;
+  const input = document.getElementById('sale-client-search');
+  const box = document.getElementById('selected-client-box');
+  const line = document.getElementById('os-client-line');
+  if(input) input.value = '';
+  if(box) { box.innerHTML = ''; box.style.display = 'none'; }
+  if(line) line.style.display = 'none';
+  updateOrderSummary();
+}
+
+function searchSaleProduct(query = '') {
+  const dropdown = document.getElementById('product-dropdown');
+  if(!dropdown) return;
+  const q = normalizeSaleText(query);
+  const items = DATA.stock
+    .filter(p => !q || normalizeSaleText(p.name).includes(q) || normalizeSaleText(p.cat).includes(q))
+    .slice(0, 30);
+
+  if(items.length === 0) {
+    dropdown.innerHTML = `<div style="padding:14px 16px;color:var(--text-muted);font-size:13px">Nenhum produto cadastrado/encontrado. Cadastre no módulo de Estoque.</div>`;
+    dropdown.style.display = 'block';
+    return;
+  }
+
+  dropdown.innerHTML = items.map(p => {
+    const empty = Number(p.qty) <= 0;
+    const stockClass = empty ? 'empty' : (Number(p.qty) < Number(p.min) ? 'low' : '');
+    return `
+      <div class="product-option ${empty ? 'out-of-stock' : ''}" ${empty ? '' : `onclick="addProductToSale(${p.id})"`}>
+        <div class="po-left">
+          <span class="po-name">${escHtml(p.name)}</span>
+          <span class="po-cat">${escHtml(p.cat || 'Sem categoria')}</span>
+        </div>
+        <div class="po-right">
+          <div class="po-price">${formatMoney(p.value)}</div>
+          <div class="po-stock ${stockClass}">${empty ? 'Esgotado' : `${p.qty} ${escHtml(p.unit || 'und')}`}</div>
+        </div>
+      </div>`;
+  }).join('');
+  dropdown.style.display = 'block';
+}
+
+function addProductToSale(id) {
+  const p = DATA.stock.find(x => x.id === id);
+  if(!p) return;
+  if(Number(p.qty) <= 0) { showToast('Produto sem estoque disponível.', 'error'); return; }
+
+  const existing = saleState.cart.find(i => i.productId === id);
+  if(existing) {
+    if(existing.qty >= Number(p.qty)) { showToast('Quantidade máxima em estoque atingida.', 'error'); return; }
+    existing.qty += 1;
+  } else {
+    saleState.cart.push({
+      productId: p.id,
+      name: p.name,
+      cat: p.cat || '',
+      unit: p.unit || 'und',
+      price: Number(p.value) || 0,
+      qty: 1
+    });
+  }
+
+  const input = document.getElementById('sale-product-search');
+  const dropdown = document.getElementById('product-dropdown');
+  if(input) input.value = '';
+  if(dropdown) dropdown.style.display = 'none';
+  renderSaleCart();
+  updateOrderSummary();
+}
+
+function changeSaleQty(productId, delta) {
+  const item = saleState.cart.find(i => i.productId === productId);
+  const stock = DATA.stock.find(p => p.id === productId);
+  if(!item || !stock) return;
+  const next = item.qty + delta;
+  if(next <= 0) {
+    removeSaleItem(productId);
+    return;
+  }
+  if(next > Number(stock.qty)) {
+    showToast('Quantidade maior que o estoque disponível.', 'error');
+    return;
+  }
+  item.qty = next;
+  renderSaleCart();
+  updateOrderSummary();
+}
+
+function removeSaleItem(productId) {
+  saleState.cart = saleState.cart.filter(i => i.productId !== productId);
+  renderSaleCart();
+  updateOrderSummary();
+}
+
+function renderSaleCart() {
+  const list = document.getElementById('sale-cart-list');
+  if(!list) return;
+  saleState.cart = saleState.cart.filter(item => DATA.stock.some(p => p.id === item.productId));
+  if(saleState.cart.length === 0) {
+    list.innerHTML = `<div class="cart-empty"><div class="ce-icon">🛒</div>Nenhum produto adicionado ainda</div>`;
+    return;
+  }
+  list.innerHTML = saleState.cart.map(item => `
+    <div class="cart-item">
+      <div style="flex:1;min-width:0">
+        <div class="ci-name">${escHtml(item.name)}</div>
+        <div class="ci-cat">${escHtml(item.cat || 'Produto')} · ${formatMoney(item.price)} / ${escHtml(item.unit || 'und')}</div>
+      </div>
+      <div class="ci-qty-wrap">
+        <button class="ci-qty-btn" onclick="changeSaleQty(${item.productId}, -1)">−</button>
+        <span class="ci-qty">${item.qty}</span>
+        <button class="ci-qty-btn" onclick="changeSaleQty(${item.productId}, 1)">+</button>
+      </div>
+      <div class="ci-total">${formatMoney(item.qty * item.price)}</div>
+      <button class="icon-btn delete" data-tip="Remover item" onclick="removeSaleItem(${item.productId})">×</button>
+    </div>
+  `).join('');
+}
+
+function saleSubtotal() {
+  return saleState.cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 0), 0);
+}
+
+function updateOrderSummary() {
+  const subtotal = saleSubtotal();
+  const discountInput = document.getElementById('sale-discount');
+  let discount = discountInput ? (parseFloat(discountInput.value) || 0) : 0;
+  if(discount < 0) discount = 0;
+  if(discount > subtotal) discount = subtotal;
+  if(discountInput && Number(discountInput.value) !== discount) discountInput.value = discount.toFixed(2);
+  const total = subtotal - discount;
+  const itemsCount = saleState.cart.reduce((sum, item) => sum + item.qty, 0);
+
+  const setText = (id, value) => { const node = document.getElementById(id); if(node) node.textContent = value; };
+  setText('os-items-count', itemsCount);
+  setText('os-subtotal', formatMoney(subtotal));
+  setText('os-total', formatMoney(total));
+
+  const clientLine = document.getElementById('os-client-line');
+  const clientName = document.getElementById('os-client-name');
+  if(clientLine && clientName) {
+    clientLine.style.display = saleState.client ? 'flex' : 'none';
+    clientName.textContent = saleState.client ? saleState.client.name : '—';
+  }
+
+  const btn = document.getElementById('btn-finalize-sale');
+  if(btn) btn.disabled = !(saleState.client && saleState.cart.length > 0 && total >= 0);
+}
+
+function selectPayment(el, method) {
+  saleState.payment = method;
+  document.querySelectorAll('#payment-methods .pm-option').forEach(o => o.classList.remove('selected'));
+  if(el) el.classList.add('selected');
+}
+
+function finalizeSale() {
+  if(!saleState.client) { showToast('Selecione um cliente cadastrado.', 'error'); return; }
+  if(saleState.cart.length === 0) { showToast('Adicione ao menos um produto.', 'error'); return; }
+
+  for(const item of saleState.cart) {
+    const stock = DATA.stock.find(p => p.id === item.productId);
+    if(!stock || Number(stock.qty) < Number(item.qty)) {
+      showToast(`Estoque insuficiente para ${item.name}.`, 'error');
+      return;
+    }
+  }
+
+  const subtotal = saleSubtotal();
+  const discount = Math.min(parseFloat(document.getElementById('sale-discount')?.value) || 0, subtotal);
+  const total = subtotal - discount;
+  const now = new Date();
+  const sale = {
+    id: nextId(getSales()),
+    createdAt: now.toISOString(),
+    dateISO: now.toISOString(),
+    client: { ...saleState.client },
+    items: saleState.cart.map(i => ({ ...i })),
+    subtotal,
+    discount,
+    total,
+    payment: saleState.payment || 'PIX',
+    obs: document.getElementById('sale-obs')?.value.trim() || ''
+  };
+
+  sale.items.forEach(item => {
+    const stock = DATA.stock.find(p => p.id === item.productId);
+    if(stock) stock.qty = Math.max(0, Number(stock.qty) - Number(item.qty));
+  });
+
+  const client = DATA.clients.find(c => c.id === saleState.client.id);
+  if(client) {
+    client.lastVisit = now.toLocaleDateString('pt-BR');
+    client.visits = (parseInt(client.visits) || 0) + 1;
+  }
+
+  getSales().push(sale);
+  saveToLocalStorage();
+  renderStock();
+  renderClients();
+  renderSaleMetrics();
+  renderSaleHistory(currentSaleHistoryFilter || 'todos');
+  refreshFinance();
+  clearSale(false);
+  showToast('Venda finalizada e estoque atualizado com sucesso!', 'success');
+}
+
+function clearSale(showMessage = true) {
+  saleState = { client: null, cart: [], payment: saleState.payment || 'PIX' };
+  const clientInput = document.getElementById('sale-client-search');
+  const productInput = document.getElementById('sale-product-search');
+  const clientDrop = document.getElementById('client-dropdown');
+  const productDrop = document.getElementById('product-dropdown');
+  const box = document.getElementById('selected-client-box');
+  const discount = document.getElementById('sale-discount');
+  const obs = document.getElementById('sale-obs');
+  if(clientInput) clientInput.value = '';
+  if(productInput) productInput.value = '';
+  if(clientDrop) clientDrop.style.display = 'none';
+  if(productDrop) productDrop.style.display = 'none';
+  if(box) { box.innerHTML = ''; box.style.display = 'none'; }
+  if(discount) discount.value = 0;
+  if(obs) obs.value = '';
+  renderSaleCart();
+  updateOrderSummary();
+  if(showMessage) showToast('Venda limpa.', 'success');
+}
+
+function renderSaleMetrics() {
+  const sales = getSales();
+  const todaySales = sales.filter(s => isTodayISO(s.dateISO || s.createdAt));
+  const revenue = todaySales.reduce((sum, s) => sum + (Number(s.total) || 0), 0);
+  const items = todaySales.reduce((sum, s) => sum + (s.items || []).reduce((a, i) => a + (Number(i.qty) || 0), 0), 0);
+  const ticket = todaySales.length ? revenue / todaySales.length : 0;
+  const setText = (id, value) => { const node = document.getElementById(id); if(node) node.textContent = value; };
+  setText('sale-count-today', todaySales.length);
+  setText('sale-revenue-today', formatMoney(revenue));
+  setText('sale-items-today', items);
+  setText('sale-ticket-today', formatMoney(ticket));
+  updateCounters();
+}
+
+function showSaleHistory() {
+  const salePage = document.getElementById('page-vendas');
+  const histPage = document.getElementById('page-vendas-historico');
+  if(salePage) salePage.style.display = 'none';
+  if(histPage) { histPage.style.display = 'block'; histPage.classList.add('active'); }
+  renderSaleHistory(currentSaleHistoryFilter || 'todos');
+}
+
+function showNewSale() {
+  const salePage = document.getElementById('page-vendas');
+  const histPage = document.getElementById('page-vendas-historico');
+  if(histPage) { histPage.style.display = 'none'; histPage.classList.remove('active'); }
+  if(salePage) { salePage.style.display = ''; salePage.classList.add('active'); }
+}
+
+function filterSaleHistory(period, el) {
+  currentSaleHistoryFilter = period || 'todos';
+  document.querySelectorAll('.sale-history-filters .filter-chip').forEach(c => c.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderSaleHistory(currentSaleHistoryFilter);
+}
+
+function saleInPeriod(sale, period) {
+  if(period === 'todos') return true;
+  const d = new Date(sale.dateISO || sale.createdAt);
+  if(Number.isNaN(d.getTime())) return false;
+  const now = new Date();
+  const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if(period === 'hoje') return d >= startToday;
+  if(period === 'semana') {
+    const start = new Date(startToday);
+    start.setDate(start.getDate() - start.getDay());
+    return d >= start;
+  }
+  if(period === 'mes') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  return true;
+}
+
+function renderSaleHistory(period = 'todos') {
+  const tbody = document.getElementById('sales-history-table');
+  const sales = getSales().filter(s => saleInPeriod(s, period)).sort((a,b) => new Date(b.dateISO || b.createdAt) - new Date(a.dateISO || a.createdAt));
+  const totalRev = sales.reduce((sum, s) => sum + (Number(s.total) || 0), 0);
+  const totalItems = sales.reduce((sum, s) => sum + (s.items || []).reduce((a, i) => a + (Number(i.qty) || 0), 0), 0);
+  const setText = (id, value) => { const node = document.getElementById(id); if(node) node.textContent = value; };
+  setText('hist-total-count', sales.length);
+  setText('hist-total-rev', formatMoney(totalRev));
+  setText('hist-avg-ticket', formatMoney(sales.length ? totalRev / sales.length : 0));
+  setText('hist-total-items', totalItems);
+  setText('hist-count-label', `${sales.length} venda(s) encontrada(s)`);
+
+  if(!tbody) return;
+  if(sales.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted)">Nenhuma venda registrada no período selecionado.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = sales.map(s => {
+    const d = new Date(s.dateISO || s.createdAt);
+    const dateLabel = Number.isNaN(d.getTime()) ? '—' : d.toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+    const products = (s.items || []).map(i => `${escHtml(i.name)} (${i.qty}x)`).join(', ');
+    return `
+      <tr>
+        <td>${dateLabel}</td>
+        <td><strong>${escHtml(s.client?.name || 'Cliente não informado')}</strong><br><span style="font-size:11px;color:var(--text-dim)">${escHtml(s.client?.phone || '')}</span></td>
+        <td>${products}</td>
+        <td>${escHtml(s.payment || 'PIX')}</td>
+        <td style="color:var(--gold);font-weight:700">${formatMoney(s.total)}</td>
+        <td style="text-align:right;white-space:nowrap">
+          <button class="btn-sm" onclick="viewSale(${s.id})">Ver</button>
+          <button class="btn-sm" onclick="deleteSale(${s.id})">Excluir</button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function viewSale(id) {
+  const sale = getSales().find(s => s.id === id);
+  if(!sale) return;
+  const items = (sale.items || []).map(i => `
+    <tr><td>${escHtml(i.name)}</td><td>${i.qty}</td><td>${formatMoney(i.price)}</td><td>${formatMoney(i.qty * i.price)}</td></tr>
+  `).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <h2>🧾 Detalhes da Venda</h2>
+    <p style="color:var(--text-muted);margin-bottom:14px">Cliente: <strong style="color:var(--gold)">${escHtml(sale.client?.name || '—')}</strong></p>
+    <div class="table-card" style="margin-bottom:14px"><table><thead><tr><th>Produto</th><th>Qtd</th><th>Unitário</th><th>Total</th></tr></thead><tbody>${items}</tbody></table></div>
+    <div class="os-line"><span class="os-label">Subtotal</span><span class="os-val">${formatMoney(sale.subtotal)}</span></div>
+    <div class="os-line"><span class="os-label">Desconto</span><span class="os-val">${formatMoney(sale.discount)}</span></div>
+    <div class="os-total"><span class="os-tl">Total</span><span class="os-tv">${formatMoney(sale.total)}</span></div>
+    <div class="modal-actions"><button class="btn-primary" onclick="closeModal()">Fechar</button></div>`;
+  openModalDirect();
+}
+
+function deleteSale(id) {
+  const sale = getSales().find(s => s.id === id);
+  if(!sale) return;
+  showConfirm('Excluir venda?', 'O estoque dos itens será devolvido automaticamente.', () => {
+    (sale.items || []).forEach(item => {
+      const stock = DATA.stock.find(p => p.id === item.productId);
+      if(stock) stock.qty = Number(stock.qty) + Number(item.qty || 0);
+    });
+    DATA.sales = getSales().filter(s => s.id !== id);
+    saveToLocalStorage();
+    renderStock();
+    renderSaleMetrics();
+    renderSaleHistory(currentSaleHistoryFilter || 'todos');
+    refreshFinance();
+    showToast('Venda excluída e estoque devolvido.', 'success');
+  });
+}
+
 // ═══════════════════════════════════════════════════════════
 // MODAL — Helper functions
 // ═══════════════════════════════════════════════════════════
@@ -3806,6 +4270,18 @@ function rebuildFinanceFromSources() {
       origin: 'agendamento'
     });
   });
+  // Vendas de produtos
+  getSales().forEach(s => {
+    const d = new Date(s.dateISO || s.createdAt);
+    const dateLabel = Number.isNaN(d.getTime()) ? todayStr : d.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'});
+    txs.push({
+      date: dateLabel,
+      desc: `Venda de produtos — ${s.client?.name || 'Cliente'} (${(s.items||[]).length} item(ns))`,
+      type: 'entrada', value: Number(s.total)||0, method: s.payment || 'Venda',
+      origin: 'venda'
+    });
+  });
+
   // Pagamentos de assinaturas
   (DATA.subscriptions||[]).forEach(s => {
     (s.payments||[]).forEach(p => {
@@ -3836,7 +4312,8 @@ function refreshFinance() {
 function renderFinanceMetrics() {
   const apptRev = DATA.transactions.filter(t => t.origin === 'agendamento').reduce((a,t)=>a+t.value, 0);
   const subRev  = DATA.transactions.filter(t => t.origin === 'assinatura').reduce((a,t)=>a+t.value, 0);
-  const total = apptRev + subRev;
+  const saleRev = DATA.transactions.filter(t => t.origin === 'venda').reduce((a,t)=>a+t.value, 0);
+  const total = apptRev + subRev + saleRev;
   const fmt = n => 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
   const set = (id,v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
   set('fin-revenue', fmt(total));
