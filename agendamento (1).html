@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kontainer do Imperador — Agendamento Online</title>
+
+<!-- SEO / Open Graph -->
+<meta name="description" content="Agende seu horário com os melhores profissionais. Experiência premium, atendimento de excelência.">
+<meta property="og:title" content="Kontainer do Imperador — Agendamento Online">
+<meta property="og:description" content="Agende seu horário online de forma rápida e fácil.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0A0A0A">
+
+<!-- Schema.org -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"LocalBusiness","name":"Kontainer do Imperador","description":"Barbearia premium","openingHours":"Mo-Sa 09:00-20:00","priceRange":"$$"}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C96A;
+  --gold-dim: #8A6B2A;
+  --black: #0A0A0A;
+  --surface: #111111;
+  --surface2: #1A1A1A;
+  --surface3: #222222;
+  --border: rgba(201,168,76,0.15);
+  --border-bright: rgba(201,168,76,0.4);
+  --text: #F0EDE8;
+  --text-muted: #888888;
+  --text-dim: #555555;
+  --green: #4CAF7D;
+  --red: #E05555;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--black);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px;}
+
+/* ── NAV ── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  padding:0 5vw;height:70px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(10,10,10,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  transition:all .3s;
+}
+.nav-brand{display:flex;align-items:center;gap:12px;}
+.nav-logo{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--border-bright);
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+  box-shadow:0 0 20px rgba(201,168,76,0.2);
+}
+.nav-title{
+  font-family:'Playfair Display',serif;
+  font-size:15px;font-weight:700;color:var(--gold);line-height:1.2;
+}
+.nav-sub{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;}
+.nav-links{display:flex;align-items:center;gap:28px;}
+.nav-links a{
+  font-size:13px;color:var(--text-muted);text-decoration:none;
+  font-weight:500;transition:color .2s;
+}
+.nav-links a:hover{color:var(--gold);}
+.btn-nav{
+  padding:9px 22px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#000;font-weight:700;font-size:12px;
+  border:none;border-radius:8px;cursor:pointer;
+  letter-spacing:.8px;text-transform:uppercase;
+  transition:opacity .2s,transform .15s;
+  font-family:'DM Sans',sans-serif;
+}
+.btn-nav:hover{opacity:.85;transform:translateY(-1px);}
+#hamburger{display:none;background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;padding:120px 5vw 80px;
+  display:flex;align-items:center;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(201,168,76,0.05) 0%, transparent 60%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+}
+.hero-content{position:relative;z-index:1;max-width:660px;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2.5px;
+  background:rgba(201,168,76,0.08);border:1px solid var(--border);
+  padding:6px 16px;border-radius:20px;margin-bottom:28px;
+  font-weight:600;
+}
+.hero-eyebrow span{width:6px;height:6px;border-radius:50%;background:var(--gold);display:inline-block;}
+h1.hero-headline{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(38px,6vw,72px);
+  font-weight:900;line-height:1.06;
+  margin-bottom:22px;
+}
+h1.hero-headline .gold{color:var(--gold);}
+.hero-sub{
+  font-size:17px;color:var(--text-muted);line-height:1.7;
+  max-width:500px;margin-bottom:40px;font-weight:300;
+}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px;}
+.btn-gold-lg{
+  padding:16px 36px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#000;font-weight:700;font-size:14px;
+  border:none;border-radius:10px;cursor:pointer;
+  letter-spacing:.5px;font-family:'DM Sans',sans-serif;
+  transition:all .25s;box-shadow:0 8px 32px rgba(201,168,76,0.25);
+}
+.btn-gold-lg:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 12px 40px rgba(201,168,76,0.35);}
+.btn-ghost-lg{
+  padding:16px 32px;
+  background:transparent;
+  color:var(--text-muted);font-size:14px;font-weight:500;
+  border:1px solid var(--border-bright);border-radius:10px;cursor:pointer;
+  transition:all .25s;font-family:'DM Sans',sans-serif;
+  text-decoration:none;display:inline-flex;align-items:center;
+}
+.btn-ghost-lg:hover{border-color:var(--gold);color:var(--gold);}
+
+.hero-stats{display:flex;gap:40px;flex-wrap:wrap;}
+.stat-item{text-align:left;}
+.stat-value{
+  font-family:'Playfair Display',serif;
+  font-size:34px;font-weight:700;color:var(--gold);line-height:1;
+}
+.stat-label{font-size:12px;color:var(--text-dim);margin-top:4px;text-transform:uppercase;letter-spacing:1px;}
+
+/* ── SECTIONS ── */
+.section{padding:90px 5vw;}
+.section-label{
+  font-size:11px;color:var(--gold);text-transform:uppercase;
+  letter-spacing:3px;font-weight:600;margin-bottom:12px;
+}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,4vw,44px);font-weight:700;
+  line-height:1.15;margin-bottom:14px;
+}
+.section-title .gold{color:var(--gold);}
+.section-sub{font-size:15px;color:var(--text-muted);max-width:500px;line-height:1.6;margin-bottom:52px;}
+.section-header-row{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+
+/* ── SERVICES ── */
+#servicos{background:var(--surface);}
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
+}
+.service-card{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:16px;padding:24px;
+  position:relative;overflow:hidden;
+  cursor:pointer;
+  transition:all .3s;
+}
+.service-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--gold),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.service-card:hover{
+  border-color:var(--border-bright);
+  transform:translateY(-4px);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(201,168,76,0.08);
+}
+.service-card:hover::before{opacity:1;}
+.svc-icon{font-size:28px;margin-bottom:16px;}
+.svc-name{font-size:17px;font-weight:700;margin-bottom:6px;}
+.svc-desc{font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:16px;}
+.svc-meta{display:flex;align-items:center;justify-content:space-between;}
+.svc-price{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;color:var(--gold);
+}
+.svc-duration{font-size:11px;color:var(--text-dim);}
+.svc-btn{
+  margin-top:18px;width:100%;padding:10px;
+  background:transparent;border:1px solid var(--border-bright);
+  color:var(--gold);font-size:12px;font-weight:700;
+  border-radius:8px;cursor:pointer;letter-spacing:.8px;text-transform:uppercase;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.svc-btn:hover{background:rgba(201,168,76,0.1);}
+#services-list{display:contents;}
+
+/* Skeleton */
+.skeleton{
+  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 50%,var(--surface2) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:8px;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── PROFISSIONAIS ── */
+#profissionais{background:var(--black);}
+.barbers-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:20px;
+}
+.barber-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:28px 20px;text-align:center;
+  transition:all .3s;
+}
+.barber-card:hover{border-color:var(--border-bright);transform:translateY(-4px);}
+.barber-avatar{
+  width:72px;height:72px;border-radius:50%;margin:0 auto 14px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#000;
+  border:2px solid var(--border-bright);
+  box-shadow:0 0 30px rgba(201,168,76,0.2);
+}
+.barber-name{font-size:16px;font-weight:700;margin-bottom:4px;}
+.barber-role{font-size:12px;color:var(--text-dim);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;}
+.barber-stats{display:flex;justify-content:center;gap:20px;}
+.bs-item{text-align:center;}
+.bs-val{font-size:15px;font-weight:700;color:var(--gold);}
+.bs-lab{font-size:10px;color:var(--text-dim);}
+#barbers-list{display:contents;}
+
+/* ── BOOKING WIZARD ── */
+#agendamento{background:var(--surface);}
+.wizard-wrap{max-width:780px;margin:0 auto;}
+
+/* Progress */
+.wizard-steps{
+  display:flex;align-items:center;gap:0;
+  margin-bottom:44px;position:relative;
+}
+.wizard-steps::before{
+  content:'';position:absolute;top:18px;left:18px;right:18px;height:2px;
+  background:var(--surface3);z-index:0;
+}
+.wizard-progress{
+  position:absolute;top:18px;left:18px;height:2px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-dim));
+  z-index:1;transition:width .5s ease;
+}
+.step-dot{
+  display:flex;flex-direction:column;align-items:center;
+  flex:1;position:relative;z-index:2;gap:8px;
+}
+.step-circle{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surface3);border:2px solid var(--surface3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--text-dim);
+  transition:all .4s;
+}
+.step-dot.done .step-circle{
+  background:var(--gold);border-color:var(--gold);color:#000;
+}
+.step-dot.active .step-circle{
+  background:transparent;border-color:var(--gold);color:var(--gold);
+  box-shadow:0 0 0 4px rgba(201,168,76,0.15);
+}
+.step-label{
+  font-size:10px;color:var(--text-dim);text-align:center;
+  text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;
+}
+.step-dot.active .step-label,.step-dot.done .step-label{color:var(--text-muted);}
+
+/* Panels */
+.wizard-panel{display:none;}
+.wizard-panel.active{display:block;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.panel-title{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;margin-bottom:24px;
+}
+.panel-title span{color:var(--gold);}
+
+/* Service pick cards */
+.pick-services{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:14px;margin-bottom:28px;
+}
+.pick-card{
+  background:var(--surface2);border:2px solid var(--border);
+  border-radius:12px;padding:18px 16px;cursor:pointer;
+  transition:all .25s;
+}
+.pick-card:hover{border-color:rgba(201,168,76,0.4);}
+.pick-card.selected{
+  border-color:var(--gold);
+  background:rgba(201,168,76,0.06);
+}
+.pick-card .pc-name{font-size:14px;font-weight:700;margin-bottom:4px;}
+.pick-card .pc-info{font-size:12px;color:var(--text-muted);}
+.pick-card .pc-price{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold);margin-top:10px;}
+.pick-indicator{
+  width:20px;height:20px;border-radius:50%;border:2px solid var(--border-bright);
+  margin-left:auto;display:flex;align-items:center;justify-content:center;
+  transition:all .25s;flex-shrink:0;font-size:10px;color:transparent;
+}
+.pick-card.selected .pick-indicator{background:var(--gold);border-color:var(--gold);color:#000;}
+.pick-card-top{display:flex;align-items:flex-start;gap:10px;}
+
+/* Barber pick */
+.pick-barbers{display:flex;flex-direction:column;gap:12px;margin-bottom:28px;}
+.pick-barber{
+  display:flex;align-items:center;gap:16px;
+  background:var(--surface2);border:2px solid var(--border);
+  border-radius:12px;padding:14px 18px;cursor:pointer;
+  transition:all .25s;
+}
+.pick-barber:hover{border-color:rgba(201,168,76,0.4);}
+.pick-barber.selected{border-color:var(--gold);background:rgba(201,168,76,0.06);}
+.pb-av{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:16px;color:#000;
+}
+.pb-info{flex:1;}
+.pb-name{font-size:15px;font-weight:700;}
+.pb-role{font-size:12px;color:var(--text-dim);}
+.pb-nota{font-size:12px;color:var(--gold);margin-left:auto;}
+
+/* Calendar */
+.calendar-wrap{margin-bottom:28px;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.cal-month{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;}
+.cal-arrow{
+  background:var(--surface2);border:1px solid var(--border);
+  width:34px;height:34px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:14px;color:var(--text-muted);
+  transition:all .2s;
+}
+.cal-arrow:hover{border-color:var(--gold);color:var(--gold);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;}
+.cal-header .cal-cell{font-size:11px;color:var(--text-dim);padding:6px 0;text-transform:uppercase;letter-spacing:.8px;}
+.cal-cell{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;
+  transition:all .2s;
+}
+.cal-cell:empty{cursor:default;}
+.cal-cell.other-month{color:var(--text-dim);}
+.cal-cell.today{color:var(--gold);font-weight:700;}
+.cal-cell.past{color:var(--text-dim);cursor:not-allowed;opacity:.4;}
+.cal-cell.available:hover,.cal-cell.available:focus{background:rgba(201,168,76,0.12);color:var(--gold);}
+.cal-cell.selected{background:var(--gold);color:#000;font-weight:700;}
+
+/* Time grid */
+.time-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(80px,1fr));
+  gap:10px;margin-bottom:28px;
+}
+.time-slot{
+  padding:10px 6px;text-align:center;
+  background:var(--surface2);border:2px solid var(--border);
+  border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.time-slot:hover{border-color:rgba(201,168,76,0.4);color:var(--gold);}
+.time-slot.selected{border-color:var(--gold);background:rgba(201,168,76,0.1);color:var(--gold);}
+.time-slot.booked{opacity:.35;cursor:not-allowed;border-color:var(--border);}
+
+/* Form */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1/-1;}
+.form-group label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;}
+.form-group input,.form-group textarea{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);font-size:14px;
+  padding:12px 14px;outline:none;transition:border .2s;
+  font-family:'DM Sans',sans-serif;
+}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--gold);}
+.form-group textarea{resize:vertical;min-height:80px;}
+
+/* Confirmation summary */
+.confirm-card{
+  background:var(--surface2);border:1px solid var(--border-bright);
+  border-radius:16px;padding:28px;margin-bottom:24px;
+}
+.confirm-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.confirm-row:last-child{border-bottom:none;}
+.cr-label{font-size:12px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+.cr-val{font-size:14px;font-weight:600;}
+.cr-total{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--gold);}
+
+/* Wizard nav */
+.wizard-nav{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-back{
+  padding:13px 24px;
+  background:transparent;border:1px solid var(--border);
+  color:var(--text-muted);font-size:13px;font-weight:600;
+  border-radius:10px;cursor:pointer;transition:all .2s;
+  font-family:'DM Sans',sans-serif;
+}
+.btn-back:hover{border-color:var(--text-muted);color:var(--text);}
+.btn-next{
+  flex:1;padding:13px 24px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#000;font-size:13px;font-weight:700;
+  border:none;border-radius:10px;cursor:pointer;
+  letter-spacing:.5px;font-family:'DM Sans',sans-serif;
+  transition:all .25s;
+}
+.btn-next:hover{opacity:.88;transform:translateY(-1px);}
+.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* Success screen */
+#success-screen{display:none;}
+#success-screen.show{display:block;animation:fadeUp .5s ease;}
+.success-wrap{max-width:540px;margin:0 auto;text-align:center;padding:60px 20px;}
+.success-icon{
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(76,175,125,0.12);border:2px solid var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;margin:0 auto 28px;
+  animation:popIn .5s ease .2s both;
+}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.success-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;margin-bottom:10px;}
+.success-sub{font-size:15px;color:var(--text-muted);margin-bottom:28px;}
+.protocol-box{
+  background:var(--surface);border:1px solid var(--border-bright);
+  border-radius:14px;padding:20px 24px;margin-bottom:28px;
+}
+.protocol-num{
+  font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--gold);
+  letter-spacing:2px;
+}
+.protocol-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;}
+.success-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-whatsapp{
+  padding:12px 24px;
+  background:#25D366;color:#fff;
+  font-size:13px;font-weight:700;border:none;border-radius:10px;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:opacity .2s;display:flex;align-items:center;gap:8px;
+}
+.btn-whatsapp:hover{opacity:.88;}
+.btn-calendar{
+  padding:12px 24px;
+  background:transparent;border:1px solid var(--border-bright);
+  color:var(--text-muted);font-size:13px;font-weight:600;
+  border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:all .2s;display:flex;align-items:center;gap:8px;
+}
+.btn-calendar:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── TOAST ── */
+#toast-container{
+  position:fixed;bottom:24px;right:24px;
+  display:flex;flex-direction:column;gap:10px;
+  z-index:9999;pointer-events:none;
+}
+.toast{
+  padding:12px 18px;border-radius:10px;
+  font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:10px;
+  animation:slideIn .3s ease;
+  pointer-events:auto;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+}
+.toast.success{background:#1a2e1a;border:1px solid var(--green);color:var(--green);}
+.toast.error{background:#2e1a1a;border:1px solid var(--red);color:var(--red);}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+
+/* ── DIVIDER ── */
+.gold-divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 5vw;}
+
+/* ── FOOTER ── */
+footer{
+  padding:40px 5vw;background:var(--surface);
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+}
+.footer-brand{display:flex;align-items:center;gap:10px;}
+.footer-copy{font-size:12px;color:var(--text-dim);}
+.footer-gold{color:var(--gold);font-weight:600;}
+
+/* ── LOADING OVERLAY ── */
+#loading-overlay{
+  position:fixed;inset:0;z-index:9990;
+  background:var(--black);
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:20px;
+  transition:opacity .4s;
+}
+#loading-overlay.hidden{opacity:0;pointer-events:none;}
+.loading-ring{
+  width:48px;height:48px;border-radius:50%;
+  border:3px solid var(--border);
+  border-top-color:var(--gold);
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--text-dim);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-links{display:none;}
+  #hamburger{display:block;}
+  .hero-stats{gap:24px;}
+  .form-grid{grid-template-columns:1fr;}
+  .wizard-steps{gap:0;}
+  .step-label{font-size:8px;}
+  .step-circle{width:28px;height:28px;font-size:10px;}
+  .wizard-steps::before{top:14px;}
+  .wizard-progress{top:14px;}
+  .pick-services{grid-template-columns:1fr 1fr;}
+  .services-grid{grid-template-columns:1fr;}
+  .barbers-grid{grid-template-columns:1fr 1fr;}
+  footer{flex-direction:column;text-align:center;}
+}
+@media(max-width:480px){
+  .pick-services{grid-template-columns:1fr;}
+  .barbers-grid{grid-template-columns:1fr;}
+  .hero-ctas{flex-direction:column;}
+  .btn-gold-lg,.btn-ghost-lg{text-align:center;justify-content:center;}
+}
+
+/* Scroll animations */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.in-view{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading-overlay">
+  <div class="loading-ring"></div>
+  <p class="loading-text">Carregando experiência premium...</p>
+</div>
+
+<!-- Nav -->
+<nav id="nav">
+  <div class="nav-brand">
+    <div class="nav-logo">✂️</div>
+    <div>
+      <div class="nav-title">Kontainer do Imperador</div>
+      <div class="nav-sub">Barbearia Premium</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#servicos">Serviços</a>
+    <a href="#profissionais">Profissionais</a>
+    <a href="#agendamento">Agendamento</a>
+    <a href="#agendamento" class="btn-nav">Agendar Agora</a>
+  </div>
+  <button id="hamburger" onclick="toggleMenu()">☰</button>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span></span> Agendamento Online</div>
+    <h1 class="hero-headline">A arte do corte perfeito, <span class="gold">no seu tempo.</span></h1>
+    <p class="hero-sub">Agende online em segundos. Escolha seu serviço, profissional e horário sem ligações, sem espera.</p>
+    <div class="hero-ctas">
+      <button class="btn-gold-lg" onclick="scrollToBooking()">✂ Agendar Agora</button>
+      <a href="#servicos" class="btn-ghost-lg">Ver Serviços</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-value" id="stat-clients">1.2k+</div>
+        <div class="stat-label">Clientes Atendidos</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">4.9⭐</div>
+        <div class="stat-label">Avaliação Média</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat-appts">3.8k+</div>
+        <div class="stat-label">Agendamentos</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- Services -->
+<section id="servicos" class="section">
+  <div class="section-header-row">
+    <div>
+      <div class="section-label reveal">Nossos Serviços</div>
+      <h2 class="section-title reveal">Cada detalhe, <span class="gold">uma obra-prima.</span></h2>
+      <p class="section-sub reveal">Serviços executados com precisão, técnica e produtos de excelência.</p>
+    </div>
+  </div>
+  <div class="services-grid" id="services-list">
+    <!-- Populated by JS -->
+    <div class="service-card skeleton" style="height:200px"></div>
+    <div class="service-card skeleton" style="height:200px"></div>
+    <div class="service-card skeleton" style="height:200px"></div>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- Profissionais -->
+<section id="profissionais" class="section">
+  <div class="section-label reveal">Nossos Profissionais</div>
+  <h2 class="section-title reveal">Mestres do <span class="gold">ofício.</span></h2>
+  <p class="section-sub reveal">Profissionais apaixonados pelo que fazem, com técnica apurada e excelência em cada atendimento.</p>
+  <div class="barbers-grid" id="barbers-list">
+    <div class="barber-card skeleton" style="height:180px"></div>
+    <div class="barber-card skeleton" style="height:180px"></div>
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<!-- Agendamento Wizard -->
+<section id="agendamento" class="section">
+  <div class="section-label reveal">Agendamento Online</div>
+  <h2 class="section-title reveal">Reserve seu <span class="gold">horário.</span></h2>
+  <p class="section-sub reveal">Processo simples e rápido. Em menos de 2 minutos você confirma seu agendamento.</p>
+
+  <!-- Wizard -->
+  <div class="wizard-wrap" id="wizard-container">
+
+    <!-- Progress -->
+    <div class="wizard-steps">
+      <div class="wizard-progress" id="wizard-progress-bar" style="width:0%"></div>
+      <div class="step-dot active" id="step-dot-1"><div class="step-circle">1</div><div class="step-label">Serviço</div></div>
+      <div class="step-dot" id="step-dot-2"><div class="step-circle">2</div><div class="step-label">Profissional</div></div>
+      <div class="step-dot" id="step-dot-3"><div class="step-circle">3</div><div class="step-label">Data</div></div>
+      <div class="step-dot" id="step-dot-4"><div class="step-circle">4</div><div class="step-label">Horário</div></div>
+      <div class="step-dot" id="step-dot-5"><div class="step-circle">5</div><div class="step-label">Seus Dados</div></div>
+      <div class="step-dot" id="step-dot-6"><div class="step-circle">6</div><div class="step-label">Confirmar</div></div>
+    </div>
+
+    <!-- Panel 1: Serviço -->
+    <div class="wizard-panel active" id="panel-1">
+      <div class="panel-title">Escolha o <span>serviço</span></div>
+      <div class="pick-services" id="pick-services-list"></div>
+      <div class="wizard-nav">
+        <button class="btn-next" id="btn-next-1" disabled onclick="goToStep(2)">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Panel 2: Profissional -->
+    <div class="wizard-panel" id="panel-2">
+      <div class="panel-title">Escolha o <span>profissional</span></div>
+      <div class="pick-barbers" id="pick-barbers-list"></div>
+      <div class="wizard-nav">
+        <button class="btn-back" onclick="goToStep(1)">← Voltar</button>
+        <button class="btn-next" id="btn-next-2" disabled onclick="goToStep(3)">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Panel 3: Data -->
+    <div class="wizard-panel" id="panel-3">
+      <div class="panel-title">Escolha a <span>data</span></div>
+      <div class="calendar-wrap" id="calendar-wrap"></div>
+      <div class="wizard-nav">
+        <button class="btn-back" onclick="goToStep(2)">← Voltar</button>
+        <button class="btn-next" id="btn-next-3" disabled onclick="goToStep(4)">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Panel 4: Horário -->
+    <div class="wizard-panel" id="panel-4">
+      <div class="panel-title">Escolha o <span>horário</span></div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px">Horários disponíveis para <span id="selected-date-label" style="color:var(--gold)"></span></p>
+      <div class="time-grid" id="time-grid"></div>
+      <div class="wizard-nav">
+        <button class="btn-back" onclick="goToStep(3)">← Voltar</button>
+        <button class="btn-next" id="btn-next-4" disabled onclick="goToStep(5)">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Panel 5: Dados do cliente -->
+    <div class="wizard-panel" id="panel-5">
+      <div class="panel-title">Seus <span>dados</span></div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Nome Completo *</label>
+          <input type="text" id="cl-name" placeholder="Seu nome completo" oninput="validateStep5()">
+        </div>
+        <div class="form-group">
+          <label>WhatsApp *</label>
+          <input type="tel" id="cl-phone" placeholder="(21) 99999-9999" oninput="maskPhone(this);validateStep5()">
+        </div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="cl-email" placeholder="seu@email.com">
+        </div>
+        <div class="form-group full">
+          <label>Observações</label>
+          <textarea id="cl-obs" placeholder="Alguma preferência ou detalhe para o profissional?"></textarea>
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn-back" onclick="goToStep(4)">← Voltar</button>
+        <button class="btn-next" id="btn-next-5" disabled onclick="goToStep(6)">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- Panel 6: Confirmação -->
+    <div class="wizard-panel" id="panel-6">
+      <div class="panel-title">Confirme seu <span>agendamento</span></div>
+      <div class="confirm-card" id="confirm-summary"></div>
+      <div class="wizard-nav">
+        <button class="btn-back" onclick="goToStep(5)">← Voltar</button>
+        <button class="btn-next" id="btn-confirm" onclick="confirmBooking()">✓ Confirmar Agendamento</button>
+      </div>
+    </div>
+
+  </div><!-- /wizard-wrap -->
+
+  <!-- Success -->
+  <div id="success-screen">
+    <div class="success-wrap">
+      <div class="success-icon">✓</div>
+      <h2 class="success-title">Agendamento Confirmado!</h2>
+      <p class="success-sub">Seu horário foi reservado com sucesso. Até breve!</p>
+      <div class="protocol-box">
+        <div class="protocol-label">Número do Protocolo</div>
+        <div class="protocol-num" id="protocol-number">#000000</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:10px" id="success-details"></div>
+      </div>
+      <div class="success-actions">
+        <button class="btn-whatsapp" id="btn-whatsapp-confirm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </button>
+        <button class="btn-calendar" id="btn-gcal">
+          📅 Google Calendar
+        </button>
+        <button class="btn-back" onclick="resetWizard()">Novo Agendamento</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-brand">
+    <div class="nav-logo">✂️</div>
+    <div>
+      <div style="font-family:'Playfair Display',serif;font-size:14px;color:var(--gold);font-weight:700">Kontainer do Imperador</div>
+      <div class="footer-copy">Barbearia Premium</div>
+    </div>
+  </div>
+  <div class="footer-copy">© 2025 Kontainer do Imperador · Todos os direitos reservados</div>
+</footer>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script>
+// ═══════════════════════════════════════════
+//  SUPABASE CONFIG — troque pelas suas credenciais
+// ═══════════════════════════════════════════
+const SUPABASE_URL = 'https://qqhpustvapckwlfsqoqs.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHB1c3R2YXBja3dsZnNxb3FzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMzE1MTQsImV4cCI6MjA5NjYwNzUxNH0.0RzT5tt-008fhVLntt0xrU9YAbnaG7LlILhqkIgt39Y';
+
+// ═══════════════════════════════════════════
+//  DADOS DE DEMONSTRAÇÃO (FALLBACK OFFLINE)
+//  Quando o Supabase estiver configurado,
+//  os dados virão de lá automaticamente.
+// ═══════════════════════════════════════════
+const DEMO_SERVICES = [
+  { id:1, name:'Corte Masculino', description:'Corte clássico ou moderno com acabamento perfeito', duration:45, value:45, icon:'✂️' },
+  { id:2, name:'Barba', description:'Modelagem e acabamento de barba com navalha', duration:30, value:35, icon:'🪒' },
+  { id:3, name:'Corte + Barba', description:'Combo completo: corte e barba com produtos premium', duration:70, value:70, icon:'💎' },
+  { id:4, name:'Sobrancelha', description:'Design e definição de sobrancelha masculina', duration:20, value:20, icon:'👁' },
+  { id:5, name:'Hidratação', description:'Tratamento capilar profundo com ativação de calor', duration:40, value:50, icon:'💧' },
+  { id:6, name:'Pigmentação de Barba', description:'Cobertura e uniformização de fios brancos', duration:50, value:60, icon:'🎨' },
+];
+
+const DEMO_BARBERS = [
+  { id:1, name:'Rafael Costa', role:'Barbeiro Sênior', nota:4.9, atendimentos:1240, avatar:'R' },
+  { id:2, name:'Mateus Silva', role:'Especialista em Barba', nota:4.8, atendimentos:980, avatar:'M' },
+  { id:3, name:'Lucas Ferreira', role:'Barbeiro', nota:4.7, atendimentos:720, avatar:'L' },
+];
+
+const HORARIOS_PADRAO = [
+  '09:00','09:30','10:00','10:30','11:00','11:30',
+  '12:00','12:30','13:00','13:30','14:00','14:30',
+  '15:00','15:30','16:00','16:30','17:00','17:30',
+  '18:00','18:30','19:00','19:30'
+];
+
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+const state = {
+  step: 1,
+  service: null,
+  barber: null,
+  date: null,
+  time: null,
+  client: {},
+  services: [],
+  barbers: [],
+  bookedSlots: [],
+  calYear: new Date().getFullYear(),
+  calMonth: new Date().getMonth(),
+};
+
+let supabaseClient = null;
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+async function init() {
+  try {
+    // Tenta carregar Supabase
+    await loadSupabase();
+    await loadServicesFromDB();
+    await loadBarbersFromDB();
+  } catch(e) {
+    console.warn('Supabase não configurado, usando dados de demo.', e);
+    state.services = DEMO_SERVICES;
+    state.barbers  = DEMO_BARBERS;
+  }
+
+  renderServiceCards();
+  renderBarberCards();
+  renderPickServices();
+  renderPickBarbers();
+  buildCalendar();
+  initScrollReveal();
+  hideLoading();
+}
+
+async function loadSupabase() {
+  if(SUPABASE_URL.includes('SEU_PROJETO')) throw new Error('Supabase not configured');
+  const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm');
+  supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+
+async function loadServicesFromDB() {
+  if(!supabaseClient) return;
+  const { data } = await supabaseClient.from('services').select('*').order('id');
+  if(data && data.length) state.services = data;
+  else state.services = DEMO_SERVICES;
+}
+
+async function loadBarbersFromDB() {
+  if(!supabaseClient) return;
+  const { data } = await supabaseClient.from('barbers').select('*').order('id');
+  if(data && data.length) state.barbers = data;
+  else state.barbers = DEMO_BARBERS;
+}
+
+async function loadBookedSlots(date, barberId) {
+  if(!supabaseClient) {
+    // simulação de slots ocupados aleatórios para demo
+    state.bookedSlots = ['10:00','14:00'];
+    return;
+  }
+  const { data } = await supabaseClient
+    .from('agendamentos')
+    .select('horario')
+    .eq('data', date)
+    .eq('profissional', state.barbers.find(b=>b.id===barberId)?.name || '')
+    .in('status', ['confirmado','em_andamento']);
+  state.bookedSlots = (data || []).map(r => r.horario);
+}
+
+// ═══════════════════════════════════════════
+//  RENDER — SERVICES SHOWCASE
+// ═══════════════════════════════════════════
+function renderServiceCards() {
+  const icons = ['✂️','🪒','💎','👁','💧','🎨','⚡','🌟'];
+  const el = document.getElementById('services-list');
+  el.innerHTML = state.services.map((s, i) => `
+    <div class="service-card reveal" style="transition-delay:${i*0.07}s">
+      <div class="svc-icon">${s.icon || icons[i % icons.length]}</div>
+      <div class="svc-name">${escHtml(s.name)}</div>
+      <div class="svc-desc">${escHtml(s.description || '')}</div>
+      <div class="svc-meta">
+        <div class="svc-price">R$ ${Number(s.value || s.price || 0).toFixed(2).replace('.',',')}</div>
+        <div class="svc-duration">⏱ ${s.duration || s.duracao || 30} min</div>
+      </div>
+      <button class="svc-btn" onclick="selectServiceAndScroll(${s.id})">Selecionar</button>
+    </div>`).join('');
+  initScrollReveal();
+}
+
+function renderBarberCards() {
+  const el = document.getElementById('barbers-list');
+  el.innerHTML = state.barbers.map(b => `
+    <div class="barber-card reveal">
+      <div class="barber-avatar">${(b.avatar || b.name?.charAt(0) || 'B').toUpperCase()}</div>
+      <div class="barber-name">${escHtml(b.name)}</div>
+      <div class="barber-role">${escHtml(b.role || b.especialidade || 'Barbeiro')}</div>
+      <div class="barber-stats">
+        <div class="bs-item"><div class="bs-val">${b.nota || '5.0'}⭐</div><div class="bs-lab">Nota</div></div>
+        <div class="bs-item"><div class="bs-val">${(b.atendimentos || 0).toLocaleString('pt-BR')}</div><div class="bs-lab">Atend.</div></div>
+      </div>
+    </div>`).join('');
+  initScrollReveal();
+}
+
+// ═══════════════════════════════════════════
+//  RENDER — WIZARD
+// ═══════════════════════════════════════════
+function renderPickServices() {
+  const icons = ['✂️','🪒','💎','👁','💧','🎨','⚡','🌟'];
+  const el = document.getElementById('pick-services-list');
+  el.innerHTML = state.services.map((s, i) => `
+    <div class="pick-card" id="ps-${s.id}" onclick="selectService(${s.id})">
+      <div class="pick-card-top">
+        <div>
+          <div class="pc-name">${s.icon || icons[i%icons.length]} ${escHtml(s.name)}</div>
+          <div class="pc-info">⏱ ${s.duration || s.duracao || 30} min</div>
+          <div class="pc-price">R$ ${Number(s.value || s.price || 0).toFixed(2).replace('.',',')}</div>
+        </div>
+        <div class="pick-indicator">✓</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderPickBarbers() {
+  const el = document.getElementById('pick-barbers-list');
+  el.innerHTML = state.barbers.map(b => `
+    <div class="pick-barber" id="pb-${b.id}" onclick="selectBarber(${b.id})">
+      <div class="pb-av">${(b.avatar || b.name?.charAt(0) || 'B').toUpperCase()}</div>
+      <div class="pb-info">
+        <div class="pb-name">${escHtml(b.name)}</div>
+        <div class="pb-role">${escHtml(b.role || b.especialidade || 'Barbeiro')}</div>
+      </div>
+      <div class="pb-nota">${b.nota || '5.0'}⭐ · ${(b.atendimentos || 0)}+ atend.</div>
+      <div class="pick-indicator" id="pbi-${b.id}">✓</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  CALENDAR
+// ═══════════════════════════════════════════
+function buildCalendar() {
+  const wrap = document.getElementById('calendar-wrap');
+  const { calYear: y, calMonth: m } = state;
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const prevDays = new Date(y, m, 0).getDate();
+
+  let cells = '';
+  // Previous month
+  for(let i = firstDay - 1; i >= 0; i--) {
+    cells += `<div class="cal-cell other-month">${prevDays - i}</div>`;
+  }
+  // Current month
+  for(let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(y, m, d);
+    const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isPast = date < today;
+    const isSunday = date.getDay() === 0;
+    const isToday = date.toDateString() === today.toDateString();
+    const isSelected = state.date === dateStr;
+    let cls = 'cal-cell';
+    if(isPast || isSunday) cls += ' past';
+    else cls += ' available';
+    if(isToday) cls += ' today';
+    if(isSelected) cls += ' selected';
+    const action = (isPast || isSunday) ? '' : `onclick="selectDate('${dateStr}', ${d})"`;
+    cells += `<div class="${cls}" ${action}>${d}</div>`;
+  }
+  // Next month fill
+  const total = firstDay + daysInMonth;
+  const nextCells = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for(let i = 1; i <= nextCells; i++) {
+    cells += `<div class="cal-cell other-month">${i}</div>`;
+  }
+
+  wrap.innerHTML = `
+    <div class="cal-nav">
+      <button class="cal-arrow" onclick="prevMonth()">‹</button>
+      <div class="cal-month">${monthNames[m]} ${y}</div>
+      <button class="cal-arrow" onclick="nextMonth()">›</button>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-header">${dayNames.map(d=>`<div class="cal-cell">${d}</div>`).join('')}</div>
+      ${cells}
+    </div>`;
+}
+
+function prevMonth() {
+  if(state.calMonth === 0) { state.calMonth = 11; state.calYear--; }
+  else state.calMonth--;
+  buildCalendar();
+}
+function nextMonth() {
+  if(state.calMonth === 11) { state.calMonth = 0; state.calYear++; }
+  else state.calMonth++;
+  buildCalendar();
+}
+
+function renderTimeGrid() {
+  const el = document.getElementById('time-grid');
+  el.innerHTML = HORARIOS_PADRAO.map(t => {
+    const isBooked = state.bookedSlots.includes(t);
+    const isSelected = state.time === t;
+    let cls = 'time-slot';
+    if(isBooked) cls += ' booked';
+    else if(isSelected) cls += ' selected';
+    return `<div class="${cls}" ${isBooked ? '' : `onclick="selectTime('${t}')"`}>${t}</div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+//  SELECTION HANDLERS
+// ═══════════════════════════════════════════
+function selectService(id) {
+  state.service = state.services.find(s => s.id === id);
+  document.querySelectorAll('.pick-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`ps-${id}`)?.classList.add('selected');
+  document.getElementById('btn-next-1').disabled = false;
+}
+
+function selectBarber(id) {
+  state.barber = state.barbers.find(b => b.id === id);
+  document.querySelectorAll('.pick-barber').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`pb-${id}`)?.classList.add('selected');
+  document.querySelectorAll('[id^="pbi-"]').forEach(el => { el.style.background=''; el.style.borderColor=''; el.style.color='transparent'; });
+  const ind = document.getElementById(`pbi-${id}`);
+  if(ind){ ind.style.background='var(--gold)'; ind.style.borderColor='var(--gold)'; ind.style.color='#000'; }
+  document.getElementById('btn-next-2').disabled = false;
+}
+
+function selectDate(dateStr, day) {
+  state.date = dateStr;
+  state.time = null;
+  buildCalendar();
+  const label = dateStr.split('-').reverse().join('/');
+  document.getElementById('selected-date-label').textContent = label;
+  document.getElementById('btn-next-3').disabled = false;
+  loadBookedSlots(dateStr, state.barber?.id).then(() => renderTimeGrid());
+}
+
+function selectTime(t) {
+  state.time = t;
+  renderTimeGrid();
+  document.getElementById('btn-next-4').disabled = false;
+}
+
+function validateStep5() {
+  const name = document.getElementById('cl-name').value.trim();
+  const phone = document.getElementById('cl-phone').value.trim();
+  document.getElementById('btn-next-5').disabled = !(name && phone.length >= 10);
+}
+
+// ═══════════════════════════════════════════
+//  WIZARD NAVIGATION
+// ═══════════════════════════════════════════
+function goToStep(n) {
+  const prev = state.step;
+  state.step = n;
+
+  document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`panel-${n}`)?.classList.add('active');
+
+  // Update dots
+  for(let i = 1; i <= 6; i++) {
+    const dot = document.getElementById(`step-dot-${i}`);
+    dot.classList.remove('active','done');
+    if(i < n) dot.classList.add('done');
+    else if(i === n) dot.classList.add('active');
+  }
+
+  // Progress bar
+  const pct = ((n - 1) / 5) * 100;
+  document.getElementById('wizard-progress-bar').style.width = pct + '%';
+
+  // If step 6 — build summary
+  if(n === 6) buildSummary();
+
+  window.scrollTo({ top: document.getElementById('agendamento').offsetTop - 80, behavior: 'smooth' });
+}
+
+function buildSummary() {
+  const svc = state.service;
+  const bar = state.barber;
+  const date = state.date?.split('-').reverse().join('/');
+  const price = Number(svc?.value || svc?.price || 0).toFixed(2).replace('.',',');
+
+  document.getElementById('confirm-summary').innerHTML = `
+    <div class="confirm-row">
+      <span class="cr-label">Serviço</span>
+      <span class="cr-val">${escHtml(svc?.name || '—')}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="cr-label">Profissional</span>
+      <span class="cr-val">${escHtml(bar?.name || '—')}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="cr-label">Data</span>
+      <span class="cr-val">${date || '—'}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="cr-label">Horário</span>
+      <span class="cr-val">${state.time || '—'}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="cr-label">Cliente</span>
+      <span class="cr-val">${escHtml(document.getElementById('cl-name').value)}</span>
+    </div>
+    <div class="confirm-row" style="padding-top:16px;">
+      <span class="cr-label">Total</span>
+      <span class="cr-total">R$ ${price}</span>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════
+//  CONFIRM BOOKING
+// ═══════════════════════════════════════════
+async function confirmBooking() {
+  const btn = document.getElementById('btn-confirm');
+  btn.disabled = true;
+  btn.textContent = 'Confirmando...';
+
+  const name  = document.getElementById('cl-name').value.trim();
+  const phone = document.getElementById('cl-phone').value.trim();
+  const email = document.getElementById('cl-email').value.trim();
+  const obs   = document.getElementById('cl-obs').value.trim();
+
+  const payload = {
+    cliente:       name,
+    telefone:      phone,
+    email:         email,
+    servico:       state.service?.name || '',
+    profissional:  state.barber?.name || '',
+    data:          state.date || '',
+    horario:       state.time || '',
+    valor:         Number(state.service?.value || state.service?.price || 0),
+    status:        'confirmado',
+    observacao:    obs,
+    createdAt:     new Date().toISOString(),
+    source:        'landing_page',
+  };
+
+  const protocol = 'KI' + Date.now().toString().slice(-6);
+
+  try {
+    if(supabaseClient) {
+      const { error } = await supabaseClient.from('agendamentos').insert(payload);
+      if(error) throw error;
+    } else {
+      // Demo: save to localStorage so admin can see it
+      const stored = JSON.parse(localStorage.getItem('lp_bookings') || '[]');
+      stored.push({ id: Date.now(), protocol, ...payload });
+      localStorage.setItem('lp_bookings', JSON.stringify(stored));
+    }
+
+    showSuccess(protocol, payload);
+    showToast('Agendamento confirmado com sucesso! ✂️', 'success');
+
+  } catch(err) {
+    console.error(err);
+    showToast('Erro ao confirmar. Tente novamente.', 'error');
+    btn.disabled = false;
+    btn.textContent = '✓ Confirmar Agendamento';
+  }
+}
+
+function showSuccess(protocol, payload) {
+  document.getElementById('wizard-container').style.display = 'none';
+  const ss = document.getElementById('success-screen');
+  ss.classList.add('show');
+
+  document.getElementById('protocol-number').textContent = '#' + protocol;
+  document.getElementById('success-details').innerHTML = `
+    <strong style="color:var(--text)">${escHtml(payload.servico)}</strong> com
+    <strong style="color:var(--gold)">${escHtml(payload.profissional)}</strong><br>
+    📅 ${payload.data.split('-').reverse().join('/')} às ${payload.horario}`;
+
+  // WhatsApp button
+  const waTxt = encodeURIComponent(
+    `Olá! Meu agendamento foi confirmado:\n\n` +
+    `*Serviço:* ${payload.servico}\n` +
+    `*Profissional:* ${payload.profissional}\n` +
+    `*Data:* ${payload.data.split('-').reverse().join('/')} às ${payload.horario}\n` +
+    `*Protocolo:* #${protocol}`
+  );
+  document.getElementById('btn-whatsapp-confirm').onclick = () => window.open(`https://wa.me/?text=${waTxt}`,'_blank');
+
+  // Google Calendar
+  const start = payload.data.replace(/-/g,'') + 'T' + payload.horario.replace(':','') + '00';
+  const dur = state.service?.duration || 45;
+  const [hh,mm] = payload.horario.split(':').map(Number);
+  const endMin = mm + dur;
+  const endH = hh + Math.floor(endMin/60);
+  const end = payload.data.replace(/-/g,'') + 'T' + String(endH).padStart(2,'0') + String(endMin%60).padStart(2,'0') + '00';
+  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Barbearia - '+payload.servico)}&dates=${start}/${end}&details=${encodeURIComponent('Profissional: '+payload.profissional+'\nProtocolo: #'+protocol)}`;
+  document.getElementById('btn-gcal').onclick = () => window.open(gcalUrl,'_blank');
+
+  window.scrollTo({ top: document.getElementById('agendamento').offsetTop - 80, behavior: 'smooth' });
+}
+
+function resetWizard() {
+  state.step = 1; state.service = null; state.barber = null;
+  state.date = null; state.time = null; state.client = {};
+  document.getElementById('wizard-container').style.display = '';
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('cl-name').value = '';
+  document.getElementById('cl-phone').value = '';
+  document.getElementById('cl-email').value = '';
+  document.getElementById('cl-obs').value = '';
+  goToStep(1);
+  document.querySelectorAll('.pick-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.pick-barber').forEach(c => c.classList.remove('selected'));
+  document.getElementById('btn-next-1').disabled = true;
+  document.getElementById('btn-next-2').disabled = true;
+}
+
+// ═══════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════
+function scrollToBooking() {
+  document.getElementById('agendamento').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function selectServiceAndScroll(id) {
+  scrollToBooking();
+  setTimeout(() => selectService(id), 400);
+}
+
+function maskPhone(el) {
+  let v = el.value.replace(/\D/g,'');
+  if(v.length > 11) v = v.slice(0,11);
+  if(v.length > 6) v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+  else if(v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+  else if(v.length > 0) v = `(${v}`;
+  el.value = v;
+}
+
+function escHtml(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function showToast(msg, type='success') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${type==='success'?'✅':'❌'}</span> ${msg}`;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(()=>t.remove(),400); }, 3500);
+}
+
+function hideLoading() {
+  const el = document.getElementById('loading-overlay');
+  el.classList.add('hidden');
+  setTimeout(() => el.remove(), 500);
+}
+
+function toggleMenu() {
+  const links = document.querySelector('.nav-links');
+  links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+  links.style.flexDirection = 'column';
+  links.style.position = 'fixed';
+  links.style.top = '70px'; links.style.left = '0'; links.style.right = '0';
+  links.style.background = 'rgba(10,10,10,0.97)';
+  links.style.padding = '20px 5vw 28px';
+  links.style.borderBottom = '1px solid var(--border)';
+  links.style.gap = '18px';
+}
+
+function initScrollReveal() {
+  const els = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in-view'); });
+  }, { threshold: 0.15 });
+  els.forEach(el => io.observe(el));
+}
+
+// Start
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
