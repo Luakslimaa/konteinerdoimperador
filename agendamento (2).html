@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kontainer do Imperador — Agendamento Online</title>
+
+<!-- SEO / Open Graph -->
+<meta name="description" content="Agende seu horário com os melhores profissionais. Experiência premium, atendimento de excelência.">
+<meta property="og:title" content="Kontainer do Imperador — Agendamento Online">
+<meta property="og:description" content="Agende seu horário online de forma rápida e fácil.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0A0A0A">
+
+<!-- Schema.org -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"LocalBusiness","name":"Kontainer do Imperador","description":"Barbearia premium","openingHours":"Mo-Sa 09:00-20:00","priceRange":"$$"}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C96A;
+  --gold-dim: #8A6B2A;
+  --black: #0A0A0A;
+  --surface: #111111;
+  --surface2: #1A1A1A;
+  --surface3: #222222;
+  --border: rgba(201,168,76,0.15);
+  --border-bright: rgba(201,168,76,0.4);
+  --text: #F0EDE8;
+  --text-muted: #888888;
+  --text-dim: #555555;
+  --green: #4CAF7D;
+  --red: #E05555;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--black);
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:3px;}
+
+/* ── NAV ── */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  padding:0 5vw;height:70px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(10,10,10,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  transition:all .3s;
+}
+.nav-brand{display:flex;align-items:center;gap:12px;}
+.nav-logo{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--border-bright);
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+  box-shadow:0 0 20px rgba(201,168,76,0.2);
+}
+.nav-title{
+  font-family:'Playfair Display',serif;
+  font-size:15px;font-weight:700;color:var(--gold);line-height:1.2;
+}
+.nav-sub{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;}
+.nav-links{display:flex;align-items:center;gap:28px;}
+.nav-links a{
+  font-size:13px;color:var(--text-muted);text-decoration:none;
+  font-weight:500;transition:color .2s;
+}
+.nav-links a:hover{color:var(--gold);}
+.btn-nav{
+  padding:9px 22px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#000;font-weight:700;font-size:12px;
+  border:none;border-radius:8px;cursor:pointer;
+  letter-spacing:.8px;text-transform:uppercase;
+  transition:opacity .2s,transform .15s;
+  font-family:'DM Sans',sans-serif;
+}
+.btn-nav:hover{opacity:.85;transform:translateY(-1px);}
+#hamburger{display:none;background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;padding:120px 5vw 80px;
+  display:flex;align-items:center;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,168,76,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(201,168,76,0.05) 0%, transparent 60%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+}
+.hero-content{position:relative;z-index:1;max-width:660px;}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:2.5px;
+  background:rgba(201,168,76,0.08);border:1px solid var(--border);
+  padding:6px 16px;border-radius:20px;margin-bottom:28px;
+  font-weight:600;
+}
+.hero-eyebrow span{width:6px;height:6px;border-radius:50%;background:var(--gold);display:inline-block;}
+h1.hero-headline{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(38px,6vw,72px);
+  font-weight:900;line-height:1.06;
+  margin-bottom:22px;
+}
+h1.hero-headline .gold{color:var(--gold);}
+.hero-sub{
+  font-size:17px;color:var(--text-muted);line-height:1.7;
+  max-width:500px;margin-bottom:40px;font-weight:300;
+}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px;}
+.btn-gold-lg{
+  padding:16px 36px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#000;font-weight:700;font-size:14px;
+  border:none;border-radius:10px;cursor:pointer;
+  letter-spacing:.5px;font-family:'DM Sans',sans-serif;
+  transition:all .25s;box-shadow:0 8px 32px rgba(201,168,76,0.25);
+}
+.btn-gold-lg:hover{opacity:.88;transform:translateY(-2px);box-shadow:0 12px 40px rgba(201,168,76,0.35);}
+.btn-ghost-lg{
+  padding:16px 32px;
+  background:transparent;
+  color:var(--text-muted);font-size:14px;font-weight:500;
+  border:1px solid var(--border-bright);border-radius:10px;cursor:pointer;
+  transition:all .25s;font-family:'DM Sans',sans-serif;
+  text-decoration:none;display:inline-flex;align-items:center;
+}
+.btn-ghost-lg:hover{border-color:var(--gold);color:var(--gold);}
+
+.hero-stats{display:flex;gap:40px;flex-wrap:wrap;}
+.stat-item{text-align:left;}
+.stat-value{
+  font-family:'Playfair Display',serif;
+  font-size:34px;font-weight:700;color:var(--gold);line-height:1;
+}
+.stat-label{font-size:12px;color:var(--text-dim);margin-top:4px;text-transform:uppercase;letter-spacing:1px;}
+
+/* ── SECTIONS ── */
+.section{padding:90px 5vw;}
+.section-label{
+  font-size:11px;color:var(--gold);text-transform:uppercase;
+  letter-spacing:3px;font-weight:600;margin-bottom:12px;
+}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,4vw,44px);font-weight:700;
+  line-height:1.15;margin-bottom:14px;
+}
+.section-title .gold{color:var(--gold);}
+.section-sub{font-size:15px;color:var(--text-muted);max-width:500px;line-height:1.6;margin-bottom:52px;}
+.section-header-row{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+
+/* ── SERVICES ── */
+#servicos{background:var(--surface);}
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
+}
+.service-card{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:16px;padding:24px;
+  position:relative;overflow:hidden;
+  cursor:pointer;
+  transition:all .3s;
+}
+.service-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--gold),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.service-card:hover{
+  border-color:var(--border-bright);
+  transform:translateY(-4px);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5),0 0 40px rgba(201,168,76,0.08);
+}
+.service-card:hover::before{opacity:1;}
+.svc-icon{font-size:28px;margin-bottom:16px;}
+.svc-name{font-size:17px;font-weight:700;margin-bottom:6px;}
+.svc-desc{font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:16px;}
+.svc-meta{display:flex;align-items:center;justify-content:space-between;}
+.svc-price{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;color:var(--gold);
+}
+.svc-duration{font-size:11px;color:var(--text-dim);}
+.svc-btn{
+  margin-top:18px;width:100%;padding:10px;
+  background:transparent;border:1px solid var(--border-bright);
+  color:var(--gold);font-size:12px;font-weight:700;
+  border-radius:8px;cursor:pointer;letter-spacing:.8px;text-transform:uppercase;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.svc-btn:hover{background:rgba(201,168,76,0.1);}
+#services-list{display:contents;}
+
+/* Skeleton */
+.skeleton{
+  background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 50%,var(--surface2) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+  border-radius:8px;
+}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── PROFISSIONAIS ── */
+#profissionais{background:var(--black);}
+.barbers-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:20px;
+}
+.barber-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:28px 20px;text-align:center;
+  transition:all .3s;
+}
+.barber-card:hover{border-color:var(--border-bright);transform:translateY(-4px);}
+.barber-avatar{
+  width:72px;height:72px;border-radius:50%;margin:0 auto 14px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#000;
+  border:2px solid var(--border-bright);
+  box-shadow:0 0 30px rgba(201,168,76,0.2);
+}
+.barber-name{font-size:16px;font-weight:700;margin-bottom:4px;}
+.barber-role{font-size:12px;color:var(--text-dim);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;}
+.barber-stats{display:flex;justify-content:center;gap:20px;}
+.bs-item{text-align:center;}
+.bs-val{font-size:15px;font-weight:700;color:var(--gold);}
+.bs-lab{font-size:10px;color:var(--text-dim);}
+#barbers-list{display:contents;}
+
+/* ── BOOKING WIZARD ── */
+#agendamento{background:var(--surface);}
+.wizard-wrap{max-width:780px;margin:0 auto;}
+
+/* Progress */
+.wizard-steps{
+  display:flex;align-items:center;gap:0;
+  margin-bottom:44px;position:relative;
+}
+.wizard-steps::before{
+  content:'';position:absolute;top:18px;left:18px;right:18px;height:2px;
+  background:var(--surface3);z-index:0;
+}
+.wizard-progress{
+  position:absolute;top:18px;left:18px;height:2px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-dim));
+  z-index:1;transition:width .5s ease;
+}
+.step-dot{
+  display:flex;flex-direction:column;align-items:center;
+  flex:1;position:relative;z-index:2;gap:8px;
+}
+.step-circle{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surface3);border:2px solid var(--surface3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--text-dim);
+  transition:all .4s;
+}
+.step-dot.done .step-circle{
+  background:var(--gold);border-color:var(--gold);color:#000;
+}
+.step-dot.active .step-circle{
+  background:transparent;border-color:var(--gold);color:var(--gold);
+  box-shadow:0 0 0 4px rgba(201,168,76,0.15);
+}
+.step-label{
+  font-size:10px;color:var(--text-dim);text-align:center;
+  text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;
+}
+.step-dot.active .step-label,.step-dot.done .step-label{color:var(--text-muted);}
+
+/* Panels */
+.wizard-panel{display:none;}
+.wizard-panel.active{display:block;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.panel-title{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:700;margin-bottom:24px;
+}
+.panel-title span{color:var(--gold);}
+
+/* Service pick cards */
+.pick-services{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:14px;margin-bottom:28px;
+}
+.pick-card{
+  background:var(--surface2);border:2px solid var(--border);
+  border-radius:12px;padding:18px 16px;cursor:pointer;
+  transition:all .25s;
+}
+.pick-card:hover{border-color:rgba(201,168,76,0.4);}
+.pick-card.selected{
+  border-color:var(--gold);
+  background:rgba(201,168,76,0.06);
+}
+.pick-card .pc-name{font-size:14px;font-weight:700;margin-bottom:4px;}
+.pick-card .pc-info{font-size:12px;color:var(--text-muted);}
+.pick-card .pc-price{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold);margin-top:10px;}
+.pick-indicator{
+  width:20px;height:20px;border-radius:50%;border:2px solid var(--border-bright);
+  margin-left:auto;display:flex;align-items:center;justify-content:center;
+  transition:all .25s;flex-shrink:0;font-size:10px;color:transparent;
+}
+.pick-card.selected .pick-indicator{background:var(--gold);border-color:var(--gold);color:#000;}
+.pick-card-top{display:flex;align-items:flex-start;gap:10px;}
+
+/* Barber pick */
+.pick-barbers{display:flex;flex-direction:column;gap:12px;margin-bottom:28px;}
+.pick-barber{
+  display:flex;align-items:center;gap:16px;
+  background:var(--surface2);border:2px solid var(--border);
+  border-radius:12px;padding:14px 18px;cursor:pointer;
+  transition:all .25s;
+}
+.pick-barber:hover{border-color:rgba(201,168,76,0.4);}
+.pick-barber.selected{border-color:var(--gold);background:rgba(201,168,76,0.06);}
+.pb-av{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:16px;color:#000;
+}
+.pb-info{flex:1;}
+.pb-name{font-size:15px;font-weight:700;}
+.pb-role{font-size:12px;color:var(--text-dim);}
+.pb-nota{font-size:12px;color:var(--gold);margin-left:auto;}
+
+/* ── DAY STRIP (horizontal scroll) ── */
+.day-strip-wrap{margin-bottom:28px;}
+.day-strip-label{
+  font-size:10px;color:var(--gold);text-transform:uppercase;
+  letter-spacing:2px;font-weight:600;margin-bottom:12px;
+}
+.day-strip-row{
+  display:flex;align-items:center;gap:8px;
+}
+.day-strip-arrow{
+  flex-shrink:0;width:32px;height:32px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:14px;color:var(--text-muted);
+  transition:all .2s;user-select:none;
+}
+.day-strip-arrow:hover{border-color:var(--gold);color:var(--gold);}
+.day-strip-arrow.disabled{opacity:.3;cursor:not-allowed;pointer-events:none;}
+.day-strip-scroll{flex:1;overflow:hidden;}
+.day-strip{
+  display:flex;gap:8px;
+  transition:transform .35s ease;
+}
+.day-chip{
+  flex-shrink:0;width:64px;
+  background:var(--surface2);border:2px solid var(--border);
+  border-radius:12px;padding:10px 6px;
+  text-align:center;cursor:pointer;
+  transition:all .25s;
+}
+.day-chip:hover:not(.past-day){border-color:rgba(201,168,76,0.4);}
+.day-chip.selected-day{background:var(--gold);border-color:var(--gold);}
+.day-chip.past-day{opacity:.35;cursor:not-allowed;}
+.day-chip .dc-weekday{
+  font-size:10px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--text-muted);margin-bottom:4px;
+}
+.day-chip.selected-day .dc-weekday{color:#000;}
+.day-chip .dc-num{
+  font-family:'Playfair Display',serif;
+  font-size:20px;font-weight:700;line-height:1;
+  color:var(--text);margin-bottom:3px;
+}
+.day-chip.selected-day .dc-num{color:#000;}
+.day-chip .dc-month{
+  font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.5px;
+}
+.day-chip.selected-day .dc-month{color:rgba(0,0,0,0.6);}
+
+/* ── TIME GRID grouped by period ── */
+.time-sections-wrap{margin-bottom:28px;}
+.time-section{margin-bottom:24px;}
+.time-period-label{
+  font-size:12px;color:var(--text-muted);font-weight:600;
+  margin-bottom:10px;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+}
+.time-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+  gap:8px;
+}
+.time-slot{
+  padding:12px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;text-align:center;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.time-slot:hover:not(.booked){background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--gold);}
+.time-slot.selected{background:var(--gold);color:#000;border-color:var(--gold);}
+.time-slot.booked{background:rgba(224,85,85,0.1);color:var(--text-dim);cursor:not-allowed;opacity:.5;border-color:var(--red);}
+.time-empty{font-size:13px;color:var(--text-dim);padding:16px 0;}
+
+/* Client form */
+.form-group{margin-bottom:20px;}
+.form-group label{
+  display:block;font-size:12px;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:600;
+}
+.form-group input,.form-group textarea{
+  width:100%;padding:12px 14px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);font-size:14px;
+  font-family:'DM Sans',sans-serif;outline:none;transition:border .2s;
+}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--gold);}
+.form-group textarea{resize:vertical;min-height:80px;}
+
+/* Buttons */
+.wizard-buttons{
+  display:flex;gap:12px;margin-top:32px;
+}
+.btn-secondary{
+  flex:1;padding:14px;
+  background:transparent;border:1px solid var(--border-bright);
+  color:var(--text-muted);font-size:13px;font-weight:700;
+  border-radius:8px;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold);}
+.btn-next{
+  flex:1;padding:14px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#000;font-size:13px;font-weight:700;
+  border:none;border-radius:8px;cursor:pointer;
+  transition:all .2s;font-family:'DM Sans',sans-serif;
+}
+.btn-next:hover:not(:disabled){opacity:.88;transform:translateY(-1px);}
+.btn-next:disabled{opacity:.5;cursor:not-allowed;}
+
+/* Success screen */
+.success-screen{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);
+  align-items:center;justify-content:center;
+  padding:20px;
+}
+.success-screen.show{display:flex;}
+.success-content{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:40px;max-width:480px;text-align:center;
+}
+.success-icon{font-size:64px;margin-bottom:20px;}
+.success-title{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:700;margin-bottom:12px;
+}
+.success-sub{font-size:14px;color:var(--text-muted);margin-bottom:24px;line-height:1.6;}
+.success-details{font-size:13px;color:var(--text);margin-bottom:28px;line-height:1.8;}
+.success-buttons{display:flex;gap:12px;flex-wrap:wrap;}
+.success-buttons button{
+  flex:1;min-width:140px;padding:12px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#000;font-size:12px;font-weight:700;
+  border:none;border-radius:8px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:opacity .2s;
+}
+.success-buttons button:hover{opacity:.85;}
+
+/* Toast */
+.toast-container{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:10px;}
+.toast{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:14px 18px;font-size:13px;
+  display:flex;align-items:center;gap:10px;
+  animation:slideIn .3s ease;
+}
+@keyframes slideIn{from{transform:translateX(400px);opacity:0}to{transform:none;opacity:1}}
+.toast.success{border-color:var(--green);color:var(--green);}
+.toast.error{border-color:var(--red);color:var(--red);}
+
+/* Confirm summary */
+.confirm-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.confirm-row:last-child{border-bottom:none;}
+.cr-label{font-size:12px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;}
+.cr-val{font-size:14px;font-weight:600;color:var(--text);}
+.cr-total{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold);}
+
+@media (max-width:768px) {
+  .pick-services{grid-template-columns:1fr;}
+  .time-grid{grid-template-columns:repeat(auto-fill,minmax(70px,1fr));}
+  .wizard-buttons{flex-direction:column;}
+  .btn-secondary,.btn-next{width:100%;}
+  .day-chip{width:56px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING BAR -->
+<div class="loading-bar" id="loadBar"></div>
+
+<!-- NAVIGATION -->
+<nav id="nav">
+  <div class="nav-brand">
+    <div class="nav-logo">✂️</div>
+    <div>
+      <div class="nav-title">Kontainer do Imperador</div>
+      <div class="nav-sub">Barbearia Premium</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#servicos">Serviços</a>
+    <a href="#profissionais">Profissionais</a>
+    <a href="#agendamento">Agendamento</a>
+  </div>
+  <button class="btn-nav" onclick="scrollToBooking()">Agendar Agora</button>
+  <button id="hamburger" onclick="toggleMenu()">☰</button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span></span> Bem-vindo ao nosso espaço</div>
+    <h1 class="hero-headline">Experiência <span class="gold">Premium</span> em Cada Corte</h1>
+    <p class="hero-sub">Agende seu horário com os melhores profissionais da barbearia. Atendimento de excelência, ambiente acolhedor e resultados que falam por si.</p>
+    <div class="hero-ctas">
+      <button class="btn-gold-lg" onclick="scrollToBooking()">Agendar Agora</button>
+      <a href="#profissionais" class="btn-ghost-lg">Conheça Nossa Equipe →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-value">500+</div>
+        <div class="stat-label">Clientes Satisfeitos</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">4.9⭐</div>
+        <div class="stat-label">Avaliação Média</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES SHOWCASE -->
+<section id="servicos" class="section">
+  <div class="section-header-row">
+    <div>
+      <div class="section-label">Nossos Serviços</div>
+      <h2 class="section-title">Tudo que você precisa em um só lugar</h2>
+      <p class="section-sub">Oferecemos uma variedade completa de serviços para cuidar da sua imagem.</p>
+    </div>
+  </div>
+  <div class="services-grid" id="services-list"></div>
+</section>
+
+<!-- BARBERS SHOWCASE -->
+<section id="profissionais" class="section">
+  <div class="section-header-row">
+    <div>
+      <div class="section-label">Nossa Equipe</div>
+      <h2 class="section-title">Profissionais <span class="gold">Experientes</span></h2>
+      <p class="section-sub">Conheça os barbeiros que vão transformar seu visual.</p>
+    </div>
+  </div>
+  <div class="barbers-grid" id="barbers-list"></div>
+</section>
+
+<!-- BOOKING WIZARD -->
+<section id="agendamento" class="section">
+  <div class="wizard-wrap">
+    <div class="section-label">Agende Seu Horário</div>
+    <h2 class="section-title">Reserve seu espaço em <span class="gold">5 passos</span></h2>
+    
+    <!-- Progress -->
+    <div class="wizard-steps">
+      <div class="wizard-progress" id="wizard-progress-bar"></div>
+      <div class="step-dot active" id="step-dot-1"><div class="step-circle">1</div><div class="step-label">Serviço</div></div>
+      <div class="step-dot" id="step-dot-2"><div class="step-circle">2</div><div class="step-label">Barbeiro</div></div>
+      <div class="step-dot" id="step-dot-3"><div class="step-circle">3</div><div class="step-label">Horário</div></div>
+      <div class="step-dot" id="step-dot-4"><div class="step-circle">4</div><div class="step-label">Dados</div></div>
+      <div class="step-dot" id="step-dot-5"><div class="step-circle">✓</div><div class="step-label">Confirmar</div></div>
+    </div>
+
+    <!-- Panels -->
+    <div id="wizard-container">
+      <!-- Step 1: Services -->
+      <div class="wizard-panel active" id="panel-1">
+        <div class="panel-title">Qual serviço deseja? <span>Passo 1/6</span></div>
+        <div class="pick-services" id="pick-services-list"></div>
+        <div class="wizard-buttons">
+          <button class="btn-next" id="btn-next-1" disabled onclick="goToStep(2)">Próximo →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Barbers -->
+      <div class="wizard-panel" id="panel-2">
+        <div class="panel-title">Escolha seu barbeiro <span>Passo 2/6</span></div>
+        <div class="pick-barbers" id="pick-barbers-list"></div>
+        <div class="wizard-buttons">
+          <button class="btn-secondary" onclick="goToStep(1)">← Voltar</button>
+          <button class="btn-next" id="btn-next-2" disabled onclick="goToStep(3)">Próximo →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Data + Horário (unificado) -->
+      <div class="wizard-panel" id="panel-3">
+        <div class="panel-title">Quando funciona pra você? <span>Passo 3/5</span></div>
+
+        <!-- Seletor de dia em strip horizontal -->
+        <div class="day-strip-wrap">
+          <div class="day-strip-label">Escolha o dia</div>
+          <div class="day-strip-row">
+            <div class="day-strip-arrow" id="day-arrow-prev" onclick="shiftDayStrip(-1)">‹</div>
+            <div class="day-strip-scroll" id="day-strip-scroll">
+              <div class="day-strip" id="day-strip"></div>
+            </div>
+            <div class="day-strip-arrow" id="day-arrow-next" onclick="shiftDayStrip(1)">›</div>
+          </div>
+        </div>
+
+        <!-- Grade de horários agrupados por período -->
+        <div class="day-strip-label" style="margin-top:4px;">Escolha o horário</div>
+        <div id="time-sections" class="time-sections-wrap"></div>
+
+        <div class="wizard-buttons">
+          <button class="btn-secondary" onclick="goToStep(2)">← Voltar</button>
+          <button class="btn-next" id="btn-next-3" disabled onclick="goToStep(4)">Próximo →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Client Info -->
+      <div class="wizard-panel" id="panel-4">
+        <div class="panel-title">Seus dados <span>Passo 4/5</span></div>
+        <div class="form-group">
+          <label>Nome Completo *</label>
+          <input type="text" id="cl-name" placeholder="Seu nome" oninput="validateStep4()">
+        </div>
+        <div class="form-group">
+          <label>Telefone *</label>
+          <input type="tel" id="cl-phone" placeholder="(00) 99999-9999" oninput="maskPhone(this); validateStep4()">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="cl-email" placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label>Observações</label>
+          <textarea id="cl-obs" placeholder="Alguma preferência ou observação?"></textarea>
+        </div>
+        <div class="wizard-buttons">
+          <button class="btn-secondary" onclick="goToStep(3)">← Voltar</button>
+          <button class="btn-next" id="btn-next-4" disabled onclick="goToStep(5)">Próximo →</button>
+        </div>
+      </div>
+
+      <!-- Step 5: Confirm -->
+      <div class="wizard-panel" id="panel-5">
+        <div class="panel-title">Confirme seu agendamento <span>Passo 5/5</span></div>
+        <div id="confirm-summary" style="margin-bottom:28px;"></div>
+        <div class="wizard-buttons">
+          <button class="btn-secondary" onclick="goToStep(4)">← Voltar</button>
+          <button class="btn-next" id="btn-confirm" onclick="confirmBooking()">✓ Confirmar Agendamento</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUCCESS SCREEN -->
+<div class="success-screen" id="success-screen">
+  <div class="success-content">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Agendamento Confirmado!</div>
+    <div class="success-sub">Seu horário foi reservado com sucesso. Você receberá uma confirmação em breve.</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;">
+      <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Protocolo</div>
+      <div id="protocol-number" style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--gold);"></div>
+    </div>
+    <div id="success-details" style="font-size:13px;color:var(--text-muted);margin-bottom:20px;"></div>
+    <div class="success-buttons">
+      <button id="btn-whatsapp-confirm" onclick="">💬 WhatsApp</button>
+      <button id="btn-gcal" onclick="">📅 Google Calendar</button>
+      <button onclick="resetWizard()">Novo Agendamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// ═══════════════════════════════════════════
+//  SUPABASE CONFIG
+// ═══════════════════════════════════════════
+const SUPABASE_URL = 'https://qqhpustvapckwlfsqoqs.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHB1c3R2YXBja3dsZnNxb3FzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMzE1MTQsImV4cCI6MjA5NjYwNzUxNH0.0RzT5tt-008fhVLntt0xrU9YAbnaG7LlILhqkIgt39Y';
+
+// ═══════════════════════════════════════════
+//  DEMO DATA (FALLBACK)
+// ═══════════════════════════════════════════
+const DEMO_SERVICES = [
+  { id:1, name:'Corte + Barba', description:'Combo completo: corte e barba com produtos premium', duration:45, value:75, icon:'💎' },
+  { id:2, name:'Corte Social', description:'Corte clássico ou moderno com acabamento perfeito', duration:30, value:45, icon:'✂️' },
+  { id:3, name:'Barba Completa', description:'Modelagem e acabamento de barba com navalha', duration:30, value:40, icon:'🪒' },
+  { id:4, name:'Corte Degradê', description:'Corte moderno com transição perfeita', duration:40, value:55, icon:'⚡' },
+  { id:5, name:'Navalhada', description:'Acabamento preciso com navalha profissional', duration:25, value:35, icon:'🎯' },
+  { id:6, name:'Corte + Barba + Sobrancelha', description:'Serviço completo de cuidados faciais', duration:60, value:90, icon:'👑' },
+];
+
+const DEMO_BARBERS = [
+  { id:1, name:'Marcus Silva', role:'Master Barber', nota:4.9, atendimentos:148, avatar:'M' },
+  { id:2, name:'Diego Costa', role:'Senior Barber', nota:4.8, atendimentos:124, avatar:'D' },
+  { id:3, name:'Rafael Mendes', role:'Barber', nota:4.7, atendimentos:98, avatar:'R' },
+  { id:4, name:'Lucas Pereira', role:'Barber Junior', nota:4.6, atendimentos:78, avatar:'L' },
+];
+
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+const state = {
+  step: 1,
+  service: null,
+  barber: null,
+  date: null,
+  time: null,
+  client: {},
+  services: [],
+  barbers: [],
+  bookedSlots: [],
+  storeHours: {},
+  blocks: [],
+};
+
+let supabaseClient = null;
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+// Aguarda a biblioteca Supabase estar disponível no window
+async function waitForSupabase(maxWait = 10000) {
+  const startTime = Date.now();
+  while(!window.supabase && Date.now() - startTime < maxWait) {
+    await new Promise(r => setTimeout(r, 100));
+  }
+  return window.supabase ? true : false;
+}
+
+async function init() {
+  console.log('[INIT] Iniciando carregamento...');
+  try {
+    console.log('[INIT] Aguardando Supabase...');
+    const supabaseReady = await waitForSupabase();
+    if(supabaseReady) {
+      console.log('[INIT] Supabase pronto, carregando dados...');
+      await loadSupabase();
+      // Carrega tudo em paralelo para velocidade
+      await Promise.all([
+        loadServicesFromDB(),
+        loadBarbersFromDB(),
+        loadStoreHoursFromCloud(),  // horarios + bloqueios do painel
+      ]);
+    } else {
+      console.warn('[INIT] Timeout Supabase, usando DEMO');
+      state.services = DEMO_SERVICES;
+      state.barbers = DEMO_BARBERS;
+      loadStoreHours();
+      loadBlocks();
+    }
+  } catch(e) {
+    console.error('[INIT] Erro:', e.message || e);
+    state.services = DEMO_SERVICES;
+    state.barbers = DEMO_BARBERS;
+    loadDefaultStoreHours();
+    loadBlocks();
+  }
+
+  console.log('[INIT] Renderizando componentes...');
+  renderServiceCards();
+  renderBarberCards();
+  renderPickServices();
+  renderPickBarbers();
+  initScrollReveal();
+  hideLoading();
+  console.log('[INIT] Pagina carregada!');
+}
+
+async function loadSupabase() {
+  if(SUPABASE_URL.includes('SEU_PROJETO')) throw new Error('Supabase not configured');
+  // Aguardar que a biblioteca Supabase esteja carregada no window
+  if(!window.supabase) {
+    console.error('[SUPABASE] Biblioteca nao disponivel no window');
+    throw new Error('Supabase library not loaded');
+  }
+  const { createClient } = window.supabase;
+  supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  console.log('[SUPABASE] Cliente criado com sucesso');
+}
+
+async function loadServicesFromDB() {
+  if(!supabaseClient) {
+    console.warn('[SERVICES] Supabase nao inicializado, usando DEMO');
+    state.services = DEMO_SERVICES;
+    return;
+  }
+  try {
+    console.log('[SERVICES] Carregando dados da tabela app_state...');
+    const { data, error } = await supabaseClient.from('app_state').select('data').eq('owner', 'shared').maybeSingle();
+    if(error) {
+      console.error('[SERVICES] Erro do Supabase:', error.message, error.code);
+      throw error;
+    }
+    console.log('[SERVICES] Resposta do Supabase:', data);
+    if(data?.data?.services && Array.isArray(data.data.services)) {
+      console.log('[SERVICES] Carregados', data.data.services.length, 'servicos do banco');
+      state.services = data.data.services;
+    } else {
+      console.warn('[SERVICES] Nenhum servico encontrado no banco, usando DEMO');
+      state.services = DEMO_SERVICES;
+    }
+  } catch(e) {
+    console.error('[SERVICES] Erro ao carregar:', e.message || e);
+    state.services = DEMO_SERVICES;
+  }
+}
+
+async function loadBarbersFromDB() {
+  if(!supabaseClient) {
+    console.warn('[BARBERS] Supabase nao inicializado, usando DEMO');
+    state.barbers = DEMO_BARBERS;
+    return;
+  }
+  try {
+    console.log('[BARBERS] Carregando dados da tabela app_state...');
+    const { data, error } = await supabaseClient.from('app_state').select('data').eq('owner', 'shared').maybeSingle();
+    if(error) {
+      console.error('[BARBERS] Erro do Supabase:', error.message, error.code);
+      throw error;
+    }
+    console.log('[BARBERS] Resposta do Supabase:', data);
+    if(data?.data?.barbers && Array.isArray(data.data.barbers)) {
+      console.log('[BARBERS] Carregados', data.data.barbers.length, 'barbeiros do banco');
+      state.barbers = data.data.barbers;
+    } else {
+      console.warn('[BARBERS] Nenhum barbeiro encontrado no banco, usando DEMO');
+      state.barbers = DEMO_BARBERS;
+    }
+  } catch(e) {
+    console.error('[BARBERS] Erro ao carregar:', e.message || e);
+    state.barbers = DEMO_BARBERS;
+  }
+}
+
+function loadStoreHours() {
+  try {
+    const stored = localStorage.getItem('kdi_horarios_v1');
+    state.storeHours = stored ? JSON.parse(stored) : loadDefaultStoreHours();
+  } catch(e) {
+    state.storeHours = loadDefaultStoreHours();
+  }
+}
+
+function loadDefaultStoreHours() {
+  const DAYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+  const hours = {};
+  DAYS.forEach(d => {
+    const weekend = d === 'sun';
+    hours[d] = {
+      open: !weekend,
+      periods: weekend ? [] : (d === 'sat'
+        ? [{start:'09:00', end:'14:00'}]
+        : [{start:'09:00', end:'12:00'},{start:'13:00', end:'19:00'}])
+    };
+  });
+  state.storeHours = hours;
+  return hours;
+}
+
+function loadBlocks() {
+  try {
+    const stored = localStorage.getItem('kdi_bloqueios_v1');
+    state.blocks = stored ? JSON.parse(stored) : [];
+  } catch(e) {
+    state.blocks = [];
+  }
+}
+
+async function loadBookedSlots(date, barberId) {
+  if(!supabaseClient) {
+    state.bookedSlots = [];
+    return;
+  }
+  try {
+    const { data } = await supabaseClient
+      .from('app_state')
+      .select('data')
+      .eq('owner', 'shared')
+      .maybeSingle();
+
+    if(data?.data?.appointments) {
+      const barberName = state.barbers.find(b => b.id === barberId)?.name || '';
+      // Bloqueia qualquer status exceto cancelado (inclui landing_page, confirmed, progress, done)
+      state.bookedSlots = data.data.appointments
+        .filter(a =>
+          a.date === date &&
+          a.barber === barberName &&
+          !['cancelled', 'cancelado'].includes(a.status)
+        )
+        .map(a => a.time);
+      console.log('[SLOTS] Horarios ocupados em', date, 'para', barberName + ':', state.bookedSlots);
+    } else {
+      state.bookedSlots = [];
+    }
+  } catch(e) {
+    console.warn('[SLOTS] Erro ao carregar horarios:', e);
+    state.bookedSlots = [];
+  }
+}
+
+// ═══════════════════════════════════════════
+//  LOAD STORE HOURS + BLOCKS DO SUPABASE/PAINEL
+// ═══════════════════════════════════════════
+async function loadStoreHoursFromCloud() {
+  if(!supabaseClient) { loadStoreHours(); return; }
+  try {
+    const { data } = await supabaseClient
+      .from('app_state')
+      .select('data')
+      .eq('owner', 'shared')
+      .maybeSingle();
+    if(data?.data?.storeHours) {
+      state.storeHours = data.data.storeHours;
+      console.log('[HOURS] Horarios de funcionamento carregados do painel');
+    } else {
+      loadStoreHours();
+    }
+    // Carrega bloqueios do painel (campo storeBlocks ou blocks)
+    const blocks = data?.data?.storeBlocks || data?.data?.blocks || [];
+    if(blocks.length) {
+      state.blocks = blocks;
+      console.log('[BLOCKS] Bloqueios carregados do painel:', state.blocks.length);
+    } else {
+      loadBlocks();
+    }
+  } catch(e) {
+    console.warn('[HOURS] Erro ao carregar do Supabase, usando localStorage:', e);
+    loadStoreHours();
+    loadBlocks();
+  }
+}
+
+// Verifica se uma data está bloqueada pelos bloqueios do painel
+function isDateBlocked(dateStr) {
+  return state.blocks.some(b => {
+    if(!b.date) return false;
+    return b.date === dateStr;
+  });
+}
+
+// Verifica se um horário específico está bloqueado (bloqueio parcial de dia)
+function isTimeBlockedByPanel(dateStr, timeStr) {
+  return state.blocks.some(b => {
+    if(b.date !== dateStr) return false;
+    if(b.allDay) return true;
+    if(!b.start || !b.end) return true;
+    // compara HH:MM
+    return timeStr >= b.start && timeStr < b.end;
+  });
+}
+
+// ═══════════════════════════════════════════
+//  RENDER — SERVICES
+// ═══════════════════════════════════════════
+function renderServiceCards() {
+  const icons = ['✂️','🪒','💎','👁','💧','🎨','⚡','🌟'];
+  const el = document.getElementById('services-list');
+  el.innerHTML = state.services.map((s, i) => `
+    <div class="service-card reveal" style="transition-delay:${i*0.07}s">
+      <div class="svc-icon">${s.icon || icons[i % icons.length]}</div>
+      <div class="svc-name">${escHtml(s.name)}</div>
+      <div class="svc-desc">${escHtml(s.description || '')}</div>
+      <div class="svc-meta">
+        <div class="svc-price">R$ ${Number(s.value || 0).toFixed(2).replace('.',',')}</div>
+        <div class="svc-duration">⏱ ${s.duration || 30} min</div>
+      </div>
+      <button class="svc-btn" onclick="selectServiceAndScroll(${s.id})">Selecionar</button>
+    </div>`).join('');
+  initScrollReveal();
+}
+
+function renderBarberCards() {
+  const el = document.getElementById('barbers-list');
+  el.innerHTML = state.barbers.map(b => `
+    <div class="barber-card reveal">
+      <div class="barber-avatar">${(b.avatar || b.name?.charAt(0) || 'B').toUpperCase()}</div>
+      <div class="barber-name">${escHtml(b.name)}</div>
+      <div class="barber-role">${escHtml(b.role || 'Barbeiro')}</div>
+      <div class="barber-stats">
+        <div class="bs-item"><div class="bs-val">${b.nota || '5.0'}⭐</div><div class="bs-lab">Nota</div></div>
+        <div class="bs-item"><div class="bs-val">${(b.atendimentos || 0).toLocaleString('pt-BR')}</div><div class="bs-lab">Atend.</div></div>
+      </div>
+    </div>`).join('');
+  initScrollReveal();
+}
+
+function renderPickServices() {
+  const icons = ['✂️','🪒','💎','👁','💧','🎨','⚡','🌟'];
+  const el = document.getElementById('pick-services-list');
+  el.innerHTML = state.services.map((s, i) => `
+    <div class="pick-card" id="ps-${s.id}" onclick="selectService(${s.id})">
+      <div class="pick-card-top">
+        <div>
+          <div class="pc-name">${s.icon || icons[i%icons.length]} ${escHtml(s.name)}</div>
+          <div class="pc-info">⏱ ${s.duration || 30} min</div>
+          <div class="pc-price">R$ ${Number(s.value || 0).toFixed(2).replace('.',',')}</div>
+        </div>
+        <div class="pick-indicator">✓</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderPickBarbers() {
+  const el = document.getElementById('pick-barbers-list');
+  el.innerHTML = state.barbers.map(b => `
+    <div class="pick-barber" id="pb-${b.id}" onclick="selectBarber(${b.id})">
+      <div class="pb-av">${(b.avatar || b.name?.charAt(0) || 'B').toUpperCase()}</div>
+      <div class="pb-info">
+        <div class="pb-name">${escHtml(b.name)}</div>
+        <div class="pb-role">${escHtml(b.role || 'Barbeiro')}</div>
+      </div>
+      <div class="pb-nota">${b.nota || '5.0'}⭐ · ${(b.atendimentos || 0)}+ atend.</div>
+      <div class="pick-indicator" id="pbi-${b.id}">✓</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  DAY STRIP
+// ═══════════════════════════════════════════
+const STRIP_DAYS = 30; // quantos dias exibir no strip
+const CHIP_W    = 72;  // largura chip + gap (px)
+let   stripOffset = 0; // deslocamento atual em chips
+
+function buildDayStrip() {
+  const strip  = document.getElementById('day-strip');
+  const today  = new Date(); today.setHours(0,0,0,0);
+  const weekdays = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const months   = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const dayKeys  = ['sun','mon','tue','wed','thu','fri','sat'];
+
+  let html = '';
+  for(let i = 0; i < STRIP_DAYS; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const dateStr = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const dayKey  = dayKeys[d.getDay()];
+    const dayConf = state.storeHours[dayKey];
+    const isPast       = d < today;
+    const isClosed     = !dayConf || !dayConf.open || !dayConf.periods?.length;
+    const isFullBlocked = typeof isDateBlocked === 'function' && isDateBlocked(dateStr) &&
+      state.blocks.some(b => b.date === dateStr && b.allDay);
+    const isSelected = state.date === dateStr;
+
+    let cls = 'day-chip';
+    let extraStyle = '';
+    let tooltip = '';
+
+    if(isPast || isClosed || isFullBlocked) {
+      cls += ' past-day';
+      if(isClosed && !isPast) tooltip = 'title="Fechado"';
+      if(isFullBlocked) tooltip = 'title="Bloqueado"';
+    }
+    if(isSelected) cls += ' selected-day';
+    const action = (isPast || isClosed || isFullBlocked) ? '' : `onclick="selectDate('${dateStr}')"`;
+
+    // Badge de bloqueio parcial (bloqueia mas não dia inteiro)
+    const hasPartialBlock = !isFullBlocked && typeof isDateBlocked === 'function' && isDateBlocked(dateStr);
+    const blockBadge = hasPartialBlock ? `<div style="font-size:8px;color:var(--gold);margin-top:1px;">⚠</div>` : '';
+
+    html += `<div class="${cls}" id="dc-${dateStr}" ${action} ${tooltip}>
+      <div class="dc-weekday">${weekdays[d.getDay()]}</div>
+      <div class="dc-num">${d.getDate()}</div>
+      <div class="dc-month">${months[d.getMonth()]}</div>
+      ${blockBadge}
+    </div>`;
+  }
+  strip.innerHTML = html;
+  stripOffset = 0;
+  applyStripTransform();
+  updateStripArrows();
+}
+
+function chipsVisible() {
+  const scroll = document.getElementById('day-strip-scroll');
+  return scroll ? Math.floor(scroll.offsetWidth / CHIP_W) : 5;
+}
+
+function shiftDayStrip(dir) {
+  const maxOffset = Math.max(0, STRIP_DAYS - chipsVisible());
+  stripOffset = Math.max(0, Math.min(maxOffset, stripOffset + dir));
+  applyStripTransform();
+  updateStripArrows();
+}
+
+function applyStripTransform() {
+  const strip = document.getElementById('day-strip');
+  if(strip) strip.style.transform = `translateX(-${stripOffset * CHIP_W}px)`;
+}
+
+function updateStripArrows() {
+  const prev = document.getElementById('day-arrow-prev');
+  const next = document.getElementById('day-arrow-next');
+  const maxOffset = Math.max(0, STRIP_DAYS - chipsVisible());
+  if(prev) prev.classList.toggle('disabled', stripOffset === 0);
+  if(next) next.classList.toggle('disabled', stripOffset >= maxOffset);
+}
+
+function getAvailableTimeSlots(dateStr) {
+  const date = new Date(dateStr + 'T00:00:00');
+  const dayOfWeek = date.getDay();
+  const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+  const dayKey = dayKeys[dayOfWeek];
+  
+  const dayConfig = state.storeHours[dayKey];
+  if(!dayConfig || !dayConfig.open || !dayConfig.periods.length) {
+    return [];
+  }
+
+  const slots = [];
+  dayConfig.periods.forEach(period => {
+    const [startH, startM] = period.start.split(':').map(Number);
+    const [endH, endM] = period.end.split(':').map(Number);
+    
+    let currentH = startH;
+    let currentM = startM;
+    const endTotalMin = endH * 60 + endM;
+    
+    while(currentH * 60 + currentM < endTotalMin) {
+      const timeStr = `${String(currentH).padStart(2,'0')}:${String(currentM).padStart(2,'0')}`;
+      slots.push(timeStr);
+      currentM += 30;
+      if(currentM >= 60) {
+        currentM -= 60;
+        currentH++;
+      }
+    }
+  });
+  
+  return slots;
+}
+
+function renderTimeSections() {
+  const el = document.getElementById('time-sections');
+  if(!el) return;
+  if(!state.date) { el.innerHTML = ''; return; }
+
+  const availableSlots = getAvailableTimeSlots(state.date);
+  if(!availableSlots.length) {
+    el.innerHTML = '<div class="time-empty">Nenhum horário disponível para este dia.</div>';
+    return;
+  }
+
+  const periods = [
+    { label: 'Manhã',  range: [0,  11] },
+    { label: 'Tarde',  range: [12, 17] },
+    { label: 'Noite',  range: [18, 23] },
+  ];
+
+  let html = '';
+  periods.forEach(p => {
+    const slots = availableSlots.filter(t => {
+      const h = parseInt(t.split(':')[0], 10);
+      return h >= p.range[0] && h <= p.range[1];
+    });
+    if(!slots.length) return;
+    html += `<div class="time-section">
+      <div class="time-period-label">${p.label}</div>
+      <div class="time-grid">`;
+    slots.forEach(t => {
+      const isBooked    = state.bookedSlots.includes(t);
+      const isPanelBlocked = typeof isTimeBlockedByPanel === 'function' && isTimeBlockedByPanel(state.date, t);
+      const isUnavailable = isBooked || isPanelBlocked;
+      const isSelected  = state.time === t;
+      let cls = 'time-slot';
+      let titleAttr = '';
+      if(isBooked) { cls += ' booked'; titleAttr = 'title="Horário ocupado"'; }
+      else if(isPanelBlocked) { cls += ' booked'; titleAttr = 'title="Horário bloqueado"'; }
+      else if(isSelected) cls += ' selected';
+      html += `<div class="${cls}" ${titleAttr} ${isUnavailable ? '' : `onclick="selectTime('${t}')"`}>${t}</div>`;
+    });
+    html += '</div></div>';
+  });
+  el.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════
+//  SELECTION HANDLERS
+// ═══════════════════════════════════════════
+function selectService(id) {
+  state.service = state.services.find(s => s.id === id);
+  document.querySelectorAll('.pick-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`ps-${id}`)?.classList.add('selected');
+  document.getElementById('btn-next-1').disabled = false;
+}
+
+function selectBarber(id) {
+  state.barber = state.barbers.find(b => b.id === id);
+  document.querySelectorAll('.pick-barber').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`pb-${id}`)?.classList.add('selected');
+  document.querySelectorAll('[id^="pbi-"]').forEach(el => { el.style.background=''; el.style.borderColor=''; el.style.color='transparent'; });
+  const ind = document.getElementById(`pbi-${id}`);
+  if(ind){ ind.style.background='var(--gold)'; ind.style.borderColor='var(--gold)'; ind.style.color='#000'; }
+  document.getElementById('btn-next-2').disabled = false;
+}
+
+function selectDate(dateStr) {
+  state.date = dateStr;
+  state.time = null;
+  document.getElementById('btn-next-3').disabled = true;
+
+  // Atualiza visual dos chips
+  document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('selected-day'));
+  const chip = document.getElementById(`dc-${dateStr}`);
+  if(chip) chip.classList.add('selected-day');
+
+  // Carrega slots e renderiza horários
+  loadBookedSlots(dateStr, state.barber?.id).then(() => renderTimeSections());
+}
+
+function selectTime(t) {
+  state.time = t;
+  renderTimeSections();
+  document.getElementById('btn-next-3').disabled = false;
+}
+
+function validateStep4() {
+  const name = document.getElementById('cl-name').value.trim();
+  const phone = document.getElementById('cl-phone').value.trim();
+  document.getElementById('btn-next-4').disabled = !(name && phone.length >= 10);
+}
+
+// ═══════════════════════════════════════════
+//  WIZARD NAVIGATION
+// ═══════════════════════════════════════════
+function goToStep(n) {
+  const prev = state.step;
+  state.step = n;
+
+  document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`panel-${n}`)?.classList.add('active');
+
+  for(let i = 1; i <= 5; i++) {
+    const dot = document.getElementById(`step-dot-${i}`);
+    if(!dot) continue;
+    dot.classList.remove('active','done');
+    if(i < n) dot.classList.add('done');
+    else if(i === n) dot.classList.add('active');
+  }
+
+  const pct = ((n - 1) / 4) * 100;
+  document.getElementById('wizard-progress-bar').style.width = pct + '%';
+
+  // Ao entrar no passo 3, constrói o strip de dias
+  if(n === 3) buildDayStrip();
+
+  if(n === 5) buildSummary();
+
+  window.scrollTo({ top: document.getElementById('agendamento').offsetTop - 80, behavior: 'smooth' });
+}
+
+function buildSummary() {
+  const svc = state.service;
+  const bar = state.barber;
+  const date = state.date?.split('-').reverse().join('/');
+  const price = Number(svc?.value || 0).toFixed(2).replace('.',',');
+
+  document.getElementById('confirm-summary').innerHTML = `
+    <div class="confirm-row">
+      <span class="cr-label">Serviço</span>
+      <span class="cr-val">${escHtml(svc?.name || '—')}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="cr-label">Profissional</span>
+      <span class="cr-val">${escHtml(bar?.name || '—')}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="cr-label">Data</span>
+      <span class="cr-val">${date || '—'}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="cr-label">Horário</span>
+      <span class="cr-val">${state.time || '—'}</span>
+    </div>
+    <div class="confirm-row">
+      <span class="cr-label">Cliente</span>
+      <span class="cr-val">${escHtml(document.getElementById('cl-name').value)}</span>
+    </div>
+    <div class="confirm-row" style="padding-top:16px;">
+      <span class="cr-label">Total</span>
+      <span class="cr-total">R$ ${price}</span>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════
+//  CONFIRM BOOKING
+// ═══════════════════════════════════════════
+async function confirmBooking() {
+  const btn = document.getElementById('btn-confirm');
+  btn.disabled = true;
+  btn.textContent = 'Confirmando...';
+
+  const name  = document.getElementById('cl-name').value.trim();
+  const phone = document.getElementById('cl-phone').value.trim();
+  const email = document.getElementById('cl-email').value.trim();
+  const obs   = document.getElementById('cl-obs').value.trim();
+
+  const payload = {
+    id: Date.now(),
+    time: state.time,
+    client: name,
+    service: state.service?.name || '',
+    barber: state.barber?.name || '',
+    value: Number(state.service?.value || 0),
+    status: 'confirmed',
+    date: state.date || '',
+    obs: obs,
+    createdAt: new Date().toISOString(),
+    source: 'landing_page',
+  };
+
+  const protocol = 'KI' + Date.now().toString().slice(-6);
+
+  try {
+    if(supabaseClient) {
+      const { data: currentData } = await supabaseClient
+        .from('app_state')
+        .select('data')
+        .eq('owner', 'shared')
+        .maybeSingle();
+
+      const appointments = currentData?.data?.appointments || [];
+
+      // Verificação de concorrência: checa se o horário já foi ocupado por outro agendamento
+      const barberName = payload.barber;
+      const slotTaken = appointments.some(a =>
+        a.date === payload.date &&
+        a.time === payload.time &&
+        a.barber === barberName &&
+        !['cancelled', 'cancelado'].includes(a.status)
+      );
+      if(slotTaken) {
+        showToast('Este horário acabou de ser reservado por outra pessoa. Por favor, escolha outro horário.', 'error');
+        btn.disabled = false;
+        btn.textContent = '✓ Confirmar Agendamento';
+        // Recarrega os slots para mostrar o horário como ocupado
+        await loadBookedSlots(payload.date, state.barber?.id);
+        renderTimeSections();
+        state.time = null;
+        document.getElementById('btn-next-3').disabled = true;
+        goToStep(3);
+        return;
+      }
+
+      appointments.push(payload);
+
+      const { error } = await supabaseClient
+        .from('app_state')
+        .upsert({
+          owner: 'shared',
+          data: {
+            ...(currentData?.data || {}),
+            appointments
+          },
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'owner' });
+
+      if(error) throw error;
+    } else {
+      const stored = JSON.parse(localStorage.getItem('lp_bookings') || '[]');
+      stored.push({ protocol, ...payload });
+      localStorage.setItem('lp_bookings', JSON.stringify(stored));
+    }
+
+    showSuccess(protocol, payload);
+    showToast('Agendamento confirmado com sucesso! ✂️', 'success');
+
+  } catch(err) {
+    console.error(err);
+    showToast('Erro ao confirmar. Tente novamente.', 'error');
+    btn.disabled = false;
+    btn.textContent = '✓ Confirmar Agendamento';
+  }
+}
+
+function showSuccess(protocol, payload) {
+  document.getElementById('wizard-container').style.display = 'none';
+  const ss = document.getElementById('success-screen');
+  ss.classList.add('show');
+
+  document.getElementById('protocol-number').textContent = '#' + protocol;
+  document.getElementById('success-details').innerHTML = `
+    <strong style="color:var(--text)">${escHtml(payload.service)}</strong> com
+    <strong style="color:var(--gold)">${escHtml(payload.barber)}</strong><br>
+    📅 ${payload.date.split('-').reverse().join('/')} às ${payload.time}`;
+
+  const waTxt = encodeURIComponent(
+    `Olá! Meu agendamento foi confirmado:\n\n` +
+    `*Serviço:* ${payload.service}\n` +
+    `*Profissional:* ${payload.barber}\n` +
+    `*Data:* ${payload.date.split('-').reverse().join('/')} às ${payload.time}\n` +
+    `*Protocolo:* #${protocol}`
+  );
+  document.getElementById('btn-whatsapp-confirm').onclick = () => window.open(`https://wa.me/?text=${waTxt}`,'_blank');
+
+  const start = payload.date.replace(/-/g,'') + 'T' + payload.time.replace(':','') + '00';
+  const dur = state.service?.duration || 45;
+  const [hh,mm] = payload.time.split(':').map(Number);
+  const endMin = mm + dur;
+  const endH = hh + Math.floor(endMin/60);
+  const end = payload.date.replace(/-/g,'') + 'T' + String(endH).padStart(2,'0') + String(endMin%60).padStart(2,'0') + '00';
+  const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Barbearia - '+payload.service)}&dates=${start}/${end}&details=${encodeURIComponent('Profissional: '+payload.barber+'\nProtocolo: #'+protocol)}`;
+  document.getElementById('btn-gcal').onclick = () => window.open(gcalUrl,'_blank');
+
+  window.scrollTo({ top: document.getElementById('agendamento').offsetTop - 80, behavior: 'smooth' });
+}
+
+function resetWizard() {
+  state.step = 1; state.service = null; state.barber = null;
+  state.date = null; state.time = null; state.client = {};
+  stripOffset = 0;
+  document.getElementById('wizard-container').style.display = '';
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('cl-name').value = '';
+  document.getElementById('cl-phone').value = '';
+  document.getElementById('cl-email').value = '';
+  document.getElementById('cl-obs').value = '';
+  goToStep(1);
+  document.querySelectorAll('.pick-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.pick-barber').forEach(c => c.classList.remove('selected'));
+  document.getElementById('btn-next-1').disabled = true;
+  document.getElementById('btn-next-2').disabled = true;
+  document.getElementById('btn-next-3').disabled = true;
+  document.getElementById('btn-next-4').disabled = true;
+}
+
+// ═══════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════
+function scrollToBooking() {
+  document.getElementById('agendamento').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function selectServiceAndScroll(id) {
+  scrollToBooking();
+  setTimeout(() => selectService(id), 400);
+}
+
+function maskPhone(el) {
+  let v = el.value.replace(/\D/g,'');
+  if(v.length > 11) v = v.slice(0,11);
+  if(v.length > 6) v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+  else if(v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+  else if(v.length > 0) v = `(${v}`;
+  el.value = v;
+}
+
+function escHtml(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function showToast(msg, type='success') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${type==='success'?'✅':'❌'}</span> ${msg}`;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .4s'; setTimeout(()=>t.remove(),400); }, 3500);
+}
+
+function hideLoading() {
+  const el = document.getElementById('loadBar');
+  if(el) {
+    el.style.opacity='0';
+    el.style.transition='opacity .5s';
+    setTimeout(() => el.remove(), 500);
+  }
+}
+
+function toggleMenu() {
+  const links = document.querySelector('.nav-links');
+  links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+  links.style.flexDirection = 'column';
+  links.style.position = 'fixed';
+  links.style.top = '70px'; links.style.left = '0'; links.style.right = '0';
+  links.style.background = 'rgba(10,10,10,0.97)';
+  links.style.padding = '20px 5vw 28px';
+  links.style.borderBottom = '1px solid var(--border)';
+  links.style.gap = '18px';
+}
+
+function initScrollReveal() {
+  const els = document.querySelectorAll('.reveal');
+  if(els.length === 0) return; // Se nao ha elementos com .reveal, nao fazer nada
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in-view'); });
+  }, { threshold: 0.15 });
+  els.forEach(el => io.observe(el));
+  // Fallback: mostrar todos os elementos apos 2 segundos se nao foram vistos
+  setTimeout(() => {
+    els.forEach(el => el.classList.add('in-view'));
+  }, 2000);
+}
+
+// Start
+document.addEventListener('DOMContentLoaded', () => {
+  // Pequeno delay para garantir que scripts externos estejam carregados
+  setTimeout(init, 100);
+});
+</script>
+</body>
+</html>
